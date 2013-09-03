@@ -2,6 +2,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+
+    //cantidad de imagenes que vamos a cargar
+    numeroImagenes = 12;
+    // dimensionamos el tamano del vector de imagenes
+    imagenes.resize(numeroImagenes*2);
 }
 
 //--------------------------------------------------------------
@@ -54,6 +59,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
