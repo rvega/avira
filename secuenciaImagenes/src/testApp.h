@@ -20,9 +20,18 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+        //thread de imagenes a cargar
 		ofxThreadedImageLoader cargadorImagenes;
+		// vector de imagenes
 		vector<ofImage> imagenes;
-		int numeroImagenes;
+
+		// directorio de las imagenes
+		ofDirectory directorio;
+		// variables de secuencia imagenes
+		int aplicacionfps;
+		float secuenciafps;
+		bool bFrameindependiente;
+		float tiempoTotalanimacion;
 
 
 
