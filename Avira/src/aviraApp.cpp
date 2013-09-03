@@ -1,59 +1,59 @@
-#include "testApp.h"
+#include "aviraApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){
+void aviraApp::setup(){
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void aviraApp::update(){
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
-
-}
-
-//--------------------------------------------------------------
-void testApp::keyPressed(int key){
+void aviraApp::draw(){
 
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){
+void aviraApp::keyPressed(int key){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void aviraApp::keyReleased(int key){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
+void aviraApp::mouseMoved(int x, int y ){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void aviraApp::mouseDragged(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
+void aviraApp::mousePressed(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
+void aviraApp::mouseReleased(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
+void aviraApp::windowResized(int w, int h){
 
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void aviraApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void aviraApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
