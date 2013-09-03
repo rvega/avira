@@ -7,6 +7,10 @@ void testApp::setup(){
     numeroImagenes = 12;
     // dimensionamos el tamano del vector de imagenes
     imagenes.resize(numeroImagenes*2);
+    	for(int i = 0; i < numeroImagenes; ++i) {
+		cargadorImagenes.loadFromDisk(imagenes[i*2], "PT_anim" + ofToString(i) + ".gif");
+
+	}
 }
 
 //--------------------------------------------------------------
@@ -15,6 +19,20 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+
+    	// draw the images.
+	ofSetColor(255);
+	for(int i = 0; i < (int)imagenes.size(); ++i) {
+		int x = (i%8);
+		int y = (i/8);
+		imagenes[i].draw(x*128,y*128, 128,128);
+	}
+
+	// draw the FPS
+	ofRect(0,ofGetHeight()-20,30,20);
+
+	ofSetColor(0);
+	ofDrawBitmapString(ofToString(ofGetFrameRate(),0),5,ofGetHeight()-5);
 
 }
 
