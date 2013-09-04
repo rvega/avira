@@ -1,8 +1,12 @@
 #pragma once
 
 #include "ofMain.h"
+#include "Tracker.h"
+
 
 class aviraApp : public ofBaseApp{
+   private: 
+      Tracker tracker;
 
 	public:
 		void setup();
@@ -18,5 +22,4 @@ class aviraApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
 };
