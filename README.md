@@ -5,6 +5,7 @@
 * [Tareas](https://github.com/rvega/avira/issues)
 * [Archivos](https://drive.google.com/folderview?id=0BzkxuvucQigbMDh4bEprcS1NNHc&usp=sharing)
 
+
 ## Instalar y compilar OF desde git.
 
 1. Primero, cree su repositorio local, baje los submódulos de git y instale OF. Mas info sobre [git](http://www.codeschool.com/courses/try-git) y [submódulos](http://git-scm.com/book/en/Git-Tools-Submodules).
@@ -39,3 +40,11 @@ Inicialmente, las tareas técnicas que tenemos son independientes una de otra, p
 3. Cambiar "path" a "repo/EntenderCarpetas"
 4. Agregar Addons necessarios.
 5. Click en "Generate Project"
+
+## Setup del proyecto Avira
+
+Los addons de terceros están incluidos como git submodules en /addons. Toca vincular:
+
+    cd openframeworks/addons
+    ln -s ../../addons/ofxUI
+

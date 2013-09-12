@@ -1,5 +1,7 @@
 # add custom variables to this file
 
+# MAKEFLAGS += --quiet
+
 # OF_ROOT allows to move projects outside apps/* just set this variable to the
 # absoulte path to the OF root folder
 
@@ -10,7 +12,7 @@ OF_ROOT = ../openFrameworks
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = 
+USER_CFLAGS = -DOFX_UI_NO_XML
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
