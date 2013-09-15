@@ -2,3 +2,7 @@
 *.swp
 *.swo
 
+/Avira/obj/x86_64Release/src/aviraApp.d
+/Avira/obj/x86_64Release/src/aviraApp.o
+/Avira/obj/x86_64Release/src/main.d
+/Avira/obj/x86_64Release/src/main.o
