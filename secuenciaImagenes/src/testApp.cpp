@@ -5,20 +5,21 @@ void testApp::setup(){
 
 
     // cargar del directorio y popular el directorio con la ruta
-	// listDir(string path)
-	directorio.listDir("imagenes");
-	//directorio.stable_sort();
 
-    // dimensionamos el tamano del vector de imagenes
-    // al tamano de los archivos en el directorio*2
-    imagenes.resize(directorio.numFiles()*2);
+	directorio.listDir("Animacionesaccesorios/Probeta");
+
+
+    // organiza las fotos del directorio
+    directorio.sort();
+    //redimensiona el vector de fotos al tamaño del directorio
+    imagenes.resize(directorio.numFiles());
     	for(int i = 0; i < directorio.numFiles(); ++i) {
 
-        cargadorImagenes.loadFromDisk(imagenes[i*2],directorio.getPath(i));
+        cargadorImagenes.loadFromDisk(imagenes[i],directorio.getPath(i));
         //imprime todos los path de las fotos y el numero de fotos
         // en el directorio
         //ofLogNotice(directorio.getPath(i));
-        //cout<<"numero de fototos"<< "\t"<< directorio.numFiles()<<endl;
+        cout<<"numero de fototos"<< "\t"<< directorio.getPath(i)<<endl;
 	}
     // velocidad de reproduccion de la secuencia
     // independiente de la aplicacion
