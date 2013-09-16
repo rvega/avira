@@ -8,7 +8,8 @@
 //=======================//
 
 TrackerVideo::TrackerVideo():
-   useCamara(true)
+   useCamara(true),
+   threshold(THRESHOLD_DEFAULT)
 {
    imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso1.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
@@ -39,14 +40,19 @@ void TrackerVideo::start(){
    }
    else{
       // Abrir archivo de la pelicula
-      pelicula.loadMovie("test.webm");
+      pelicula.loadMovie("referencia.webm");
       pelicula.play();
    }
 
    // Cargar imagen de fondo
-   ofImage img;
-   img.loadImage("fondo.png");
-   imgFondo.setFromPixels( img.getPixelsRef() );
+   try{
+      ofImage img;
+      img.loadImage("fondo.png");
+      imgFondo.setFromPixels( img.getPixelsRef() );
+   }
+   catch(int e){
+      // Nada, siga fresco.
+   }
 
    startThread(false, false); // non blocking, not verbose;
 }
@@ -67,6 +73,21 @@ void TrackerVideo::stop(){
 void TrackerVideo::gotMessage(ofMessage& msg){
    if(msg.message == "CAPTURAR_FONDO"){
       captureFondo();
+   }
+   else if(msg.message == "USAR_CAMARA"){
+      stop();
+      useCamara = true;
+      start();
+   }
+   else if(msg.message == "USAR_PELICULA"){
+      stop();
+      useCamara = false;
+      start();
+   }
+
+   if(string::npos != msg.message.find("THRESHOLD")){
+      string val = msg.message.substr( msg.message.find(" ") ); 
+      threshold = ofToFloat(val);
    }
 }
 
@@ -112,8 +133,7 @@ ofxCvColorImage TrackerVideo::getImgInput(){
 }
 
 std::map<int, Persona> TrackerVideo::getGente(){
-   std::map<int, Persona> a;
-   return a;
+   return gente;
 }
 
 //==========//
@@ -122,6 +142,14 @@ std::map<int, Persona> TrackerVideo::getGente(){
 void TrackerVideo::threadedFunction(){
    bool frameEsNuevo = false;
    unsigned char* pixels;
+   ofxCvContourFinder contourFinder;
+   ofRectangle rectangle;
+   int i;
+   for(i=0; i<NUM_PERSONAS; i++){
+      Persona personaNueva;
+      personaNueva.setColor(ofRandom(0,255), ofRandom(0,255), ofRandom(0,255));
+      gente[i] = personaNueva;
+   }
 
    while(isThreadRunning()){
       // Tenemos un frame nuevo?
@@ -146,15 +174,36 @@ void TrackerVideo::threadedFunction(){
 
          // Vamos a escribir a imgInput, pongale lock.
          if(!lock()){
-            // ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
+            ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
          }
          else{
-
-            // grises automaticamente
             imgInput.setRoiFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
             imgInput.mirror(false, true); // Flip horizontally
+
+            // Convertir a escala de grises
             imgPaso1 = imgInput;
+
+            // Restar la imagen gris (paso1) de el fondo.
+            imgPaso2.absDiff(imgFondo, imgPaso1);
+            imgPaso3 = imgPaso2;
+
+            // Aplicar threshold a la resta (paso2)
+            // TODO: threshold desde GUI
+            imgPaso3.threshold(threshold);
+
+            // Encontrar contornos
+            // TODO: traer lo de Johnny
+            contourFinder.findContours(imgPaso3, PERSONA_TAMANO_MINIMO, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos
+
             unlock();
+
+            for(i=0; i<contourFinder.nBlobs; i++){
+               rectangle = contourFinder.blobs.at(i).boundingRect;
+               gente.at(i).width = rectangle.width;
+               gente.at(i).height = rectangle.height;
+               gente.at(i).x = rectangle.x;
+               gente.at(i).y = rectangle.y;
+            }
          }
       }
       sleep(1);

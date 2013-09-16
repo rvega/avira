@@ -1,4 +1,5 @@
 #pragma once
+#include "ofMain.h"
 
 class Persona{
    public:
@@ -8,8 +9,11 @@ class Persona{
       int y;
       int height;
       int width;      
+      void setColor(int r, int g, int b);
+      ofColor getColor();
 
-   // private:
+   private:
+      ofColor color;
       // Persona(const Persona&);
       // Persona& operator=(const Persona&);
 };

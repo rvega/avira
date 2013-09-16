@@ -21,9 +21,7 @@ void Gui::setup(){
    gui.addButton("Capturar Fondo", true);
    gui.addButton("Pantalla Completa", true);
    gui.addSpacer(GUI_WIDTH, 0);
-   gui.addLabel("Cualquier tecla para", OFX_UI_FONT_SMALL);
-   gui.addLabel("salir de pantalla", OFX_UI_FONT_SMALL);
-   gui.addLabel("completa", OFX_UI_FONT_SMALL);
+   gui.addSlider("Threshold", 0, 100, THRESHOLD_DEFAULT);
    gui.addSpacer(GUI_WIDTH, 0);
    gui.autoSizeToFitWidgets();
 
@@ -39,14 +37,26 @@ void Gui::exit(){
 }
 
 void Gui::guiEvent(ofxUIEventArgs &e) {
+   if(e.widget->getName()=="Threshold") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("THRESHOLD " + ofToString(value) );
+      return;
+   }
+
    bool value = ((ofxUIButton*)(e.widget))->getValue();
    if(e.widget->getName()=="Pantalla Completa" && value) {
       fullscreen = true;
       gui.setVisible(false);
       ofSendMessage("FULLSCREEN_ON");
    }
-   if(e.widget->getName()=="Capturar Fondo" && value) {
+   else if(e.widget->getName()=="Capturar Fondo" && value) {
       ofSendMessage("CAPTURAR_FONDO");
+   }
+   else if(e.widget->getName()=="Usar Camara" && value) {
+      ofSendMessage("USAR_CAMARA");
+   }
+   else if(e.widget->getName()=="Usar Pelicula" && value) {
+      ofSendMessage("USAR_PELICULA");
    }
 }
 
@@ -65,4 +75,3 @@ void Gui::keyPressed(ofKeyEventArgs& data){
       ofSendMessage("FULLSCREEN_OFF");
    }
 }
-
