@@ -6,7 +6,7 @@ void testApp::setup(){
 
     // cargar del directorio y popular el directorio con la ruta
 
-	directorio.listDir("Animacionesaccesorios/Probeta");
+	directorio.listDir("pajaroRojo");
 
 
     // organiza las fotos del directorio

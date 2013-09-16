@@ -8,3 +8,13 @@ Persona::Persona(){
 }
 
 Persona::~Persona(){}
+
+void Persona::setColor(int r, int g, int b){
+   color.r = r;
+   color.g = g;
+   color.b = b;
+}
+
+ofColor Persona::getColor(){
+   return color;
+}

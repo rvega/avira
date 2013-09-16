@@ -3,6 +3,9 @@
 void AviraApp::setup(){
    fullscreen = false;
    renderer.setTitle1("Fondo:");
+   renderer.setTitle2("Grises:");
+   renderer.setTitle3("Diferencia:");
+   renderer.setTitle4("Thresholded:");
    gui.setup();
    tracker.start();
    sleep(1);
@@ -14,22 +17,20 @@ void AviraApp::exit(){
 }
 
 void AviraApp::update(){
-   // ofLogNotice() << "AviraApp::update";
-
    if(!tracker.lock()){
-      // ofLogNotice() << "Choque de locks. AviraApp::update" << "\n";
+      ofLogNotice() << "Choque de locks. AviraApp::update" << "\n";
    }
    else{
+      renderer.setGente( tracker.getGente() );
       renderer.setImgOutput( tracker.getImgInput() );
       if(!fullscreen){
          renderer.setImg1( tracker.getImgFondo() );
-         // renderer.setImg2( tracker.getImgPaso2() );
-         // renderer.setImg3( tracker.getImgPaso3() );
+         renderer.setImg2( tracker.getImgPaso1() );
+         renderer.setImg3( tracker.getImgPaso2() );
+         renderer.setImg4( tracker.getImgPaso3() );
       }
       tracker.unlock();
    }
-   // gente = tracker->getGente();
-  // tracker.getImgInput();
 }
 
 void AviraApp::draw(){
