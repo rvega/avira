@@ -4,9 +4,10 @@
 void testApp::setup(){
 
 
-    // cargar del directorio y popular el directorio con la ruta
+    // Cargar del directorio y popular el directorio con la ruta
+    // "primernivel/segundonivel"
 
-	directorio.listDir("Animacionesaccesorios/Probeta");
+	directorio.listDir("pajaroRojo");
 
 
     // organiza las fotos del directorio
@@ -55,7 +56,8 @@ void testApp::draw(){
         frameIndex = ofGetFrameNum() % imagenes.size();
     }
     // dibuja la secuencia en mousex, mousey
-    imagenes[frameIndex].draw(ofGetMouseX(),ofGetMouseY());
+    imagenes[frameIndex].draw(0,0);
+    imagenes[frameIndex].draw(640,0);
 
     // how fast is the app running and some other info
     ofSetColor(50);
