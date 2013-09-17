@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "Renderer.h",
 #include "constantes.h"
 
 //=======================//
@@ -7,10 +7,18 @@
 Renderer::Renderer():
    fullscreen(false)
 {
+   Animacion* escena1 = new Animacion(600, 400, 30);
+   escena1->setPath("animaciones/accesorios/mapa");
+   escena1->play();
+   animaciones.push_back(escena1);
+
    ofRegisterGetMessages(this);
 }
 
 Renderer::~Renderer() {
+   for(int i = 0; i < animaciones.size(); i++) {
+      delete animaciones.at(i);
+   }
    ofUnregisterGetMessages(this);
 }
 
@@ -84,6 +92,7 @@ void Renderer::drawImage(int x, int y, string title, imageType img){
 
 void Renderer::draw(){
    ofPushMatrix();
+   ofPushStyle();
    ofSetColor(255,255,255);
    if(!fullscreen){
       drawImage<ofxCvGrayscaleImage>(POSICION_1_X, POSICION_1_Y, title1, img1);
@@ -94,12 +103,26 @@ void Renderer::draw(){
       drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
 
       for(int i=0; i<NUM_PERSONAS; i++){
+         if(!gente.at(i).activa) continue;
+
+         ofNoFill();
          ofSetColor(gente.at(i).getColor());
-         ofRect(gente.at(i).x, gente.at(i).y, gente.at(i).width, gente.at(i).height);
+         float x,y,w,h;
+         x = POSICION_6_X + (gente.at(i).x * IMAGEN_PEQUENA_WIDTH);
+         y = POSICION_6_Y + (gente.at(i).y * IMAGEN_PEQUENA_HEIGHT);
+         w = gente.at(i).width * IMAGEN_PEQUENA_WIDTH;
+         h = gente.at(i).height * IMAGEN_PEQUENA_HEIGHT;
+         ofRect(x,y,w,h);
+         ofFill();
+      }
+
+      for(int i=0; i<animaciones.size(); i++){
+         animaciones.at(i)->draw();
       }
    }
    else{
       imgOutput.draw(0, 0, IMAGEN_GRANDE_WIDTH, IMAGEN_GRANDE_HEIGHT);
    }
+   ofPopStyle();
    ofPopMatrix();
 }

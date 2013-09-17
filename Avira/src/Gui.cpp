@@ -5,35 +5,53 @@ Gui::Gui():
    fullscreen(false),
 
    // Invoca el constructor de ofxUI para la variable gui:
-   gui(GUI_POS_X, GUI_POS_Y, GUI_WIDTH, 0)
+   gui(GUI_POS_X, GUI_POS_Y, GUI_WIDTH, 0),
+   gui2(GUI_POS_X+GUI_WIDTH+8, GUI_POS_Y+18, GUI_WIDTH, 0)
 {}
 
 Gui::~Gui(){}
 
 void Gui::setup(){
-   gui.addLabel("Opciones", OFX_UI_FONT_MEDIUM);
+   // ofColor bgColor = ofColor(50, 50, 50);
+   // gui.setColorBack(bgColor);
+   // gui2.setColorBack(bgColor);
+
    gui.setWidgetFontSize(OFX_UI_FONT_SMALL);
-   gui.addSpacer(GUI_WIDTH,1);
-   ofColor bgColor = ofColor(50, 50, 50);
-   gui.setColorBack(bgColor);
+   gui2.setWidgetFontSize(OFX_UI_FONT_SMALL);
+
+   gui.addLabel("Opciones", OFX_UI_FONT_MEDIUM);
+   gui.addSpacer(GUI_WIDTH,0);
    gui.addButton("Usar Camara", true);
    gui.addButton("Usar Pelicula", true);
    gui.addButton("Capturar Fondo", true);
    gui.addButton("Pantalla Completa", true);
+   gui.addLabel("Cualquier tecla para salir de pantalla completa", OFX_UI_FONT_SMALL);
    gui.addSpacer(GUI_WIDTH, 0);
-   gui.addSlider("Threshold", 0, 100, THRESHOLD_DEFAULT);
    gui.addSpacer(GUI_WIDTH, 0);
    gui.autoSizeToFitWidgets();
 
+   gui2.addSpacer(GUI_WIDTH, 0);
+   gui2.addSlider("Threshold", 0, 100, THRESHOLD_DEFAULT);
+   gui2.addSlider("Tamanho Minimo", PERSONA_TAMANO_MINIMO, PERSONA_TAMANO_MAXIMO_SLIDER, PERSONA_TAMANO_DEFAULT);
+   gui2.autoSizeToFitWidgets();
+
    ofAddListener(gui.newGUIEvent, this, &Gui::guiEvent);
+   ofAddListener(gui2.newGUIEvent, this, &Gui::guiEvent);
    ofAddListener(ofEvents().mousePressed, this, &Gui::mousePressed);
    ofAddListener(ofEvents().keyPressed, this, &Gui::keyPressed);
+   
+   gui.loadSettings("settings1.xml");
+   gui2.loadSettings("settings2.xml");
 }
 
 void Gui::exit(){
+   gui.saveSettings("settings1.xml");
+   gui2.saveSettings("settings2.xml");
+
    ofRemoveListener(ofEvents().mousePressed, this, &Gui::mousePressed);
    ofRemoveListener(ofEvents().keyPressed, this, &Gui::keyPressed);
    ofRemoveListener(gui.newGUIEvent, this, &Gui::guiEvent);
+   ofRemoveListener(gui2.newGUIEvent, this, &Gui::guiEvent);
 }
 
 void Gui::guiEvent(ofxUIEventArgs &e) {
@@ -43,10 +61,17 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
       return;
    }
 
+   if(e.widget->getName()=="Tamanho Minimo") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("TAMANO_MINIMO " + ofToString(value) );
+      return;
+   }
+
    bool value = ((ofxUIButton*)(e.widget))->getValue();
    if(e.widget->getName()=="Pantalla Completa" && value) {
       fullscreen = true;
       gui.setVisible(false);
+      gui2.setVisible(false);
       ofSendMessage("FULLSCREEN_ON");
    }
    else if(e.widget->getName()=="Capturar Fondo" && value) {
@@ -64,6 +89,7 @@ void Gui::mousePressed(ofMouseEventArgs& data){
    if(fullscreen){
       fullscreen = false;
       gui.setVisible(true);
+      gui2.setVisible(true);
       ofSendMessage("FULLSCREEN_OFF");
    }
 }
@@ -72,6 +98,7 @@ void Gui::keyPressed(ofKeyEventArgs& data){
    if(fullscreen){
       fullscreen=false;
       gui.setVisible(true);
+      gui2.setVisible(true);
       ofSendMessage("FULLSCREEN_OFF");
    }
 }

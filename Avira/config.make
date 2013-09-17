@@ -12,7 +12,7 @@ OF_ROOT = ../openFrameworks
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = -DOFX_UI_NO_XML
+USER_CFLAGS = 
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker

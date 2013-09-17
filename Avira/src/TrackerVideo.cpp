@@ -9,7 +9,8 @@
 
 TrackerVideo::TrackerVideo():
    useCamara(true),
-   threshold(THRESHOLD_DEFAULT)
+   threshold(THRESHOLD_DEFAULT),
+   tamano(PERSONA_TAMANO_DEFAULT)
 {
    imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso1.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
@@ -35,7 +36,7 @@ void TrackerVideo::start(){
       // Abrir el stream de la camara
       camara.setVerbose(false);
       camara.setDeviceID(2);
-      camara.setDesiredFrameRate(30);
+      camara.setDesiredFrameRate(1);
       camara.initGrabber(CAMARA_WIDTH, CAMARA_HEIGHT);
    }
    else{
@@ -85,8 +86,13 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       start();
    }
 
+   if(string::npos != msg.message.find("TAMANO_MINIMO")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      tamano = ofToFloat(val);
+   }
+
    if(string::npos != msg.message.find("THRESHOLD")){
-      string val = msg.message.substr( msg.message.find(" ") ); 
+      string val = msg.message.substr( msg.message.find(" ") );
       threshold = ofToFloat(val);
    }
 }
@@ -144,6 +150,7 @@ void TrackerVideo::threadedFunction(){
    unsigned char* pixels;
    ofxCvContourFinder contourFinder;
    ofRectangle rectangle;
+   int frameCounter = 0;
    int i;
    for(i=0; i<NUM_PERSONAS; i++){
       Persona personaNueva;
@@ -152,6 +159,7 @@ void TrackerVideo::threadedFunction(){
    }
 
    while(isThreadRunning()){
+
       // Tenemos un frame nuevo?
       if(useCamara){
          camara.update();
@@ -174,11 +182,20 @@ void TrackerVideo::threadedFunction(){
 
          // Vamos a escribir a imgInput, pongale lock.
          if(!lock()){
-            ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
+            // ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
          }
          else{
             imgInput.setRoiFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
             imgInput.mirror(false, true); // Flip horizontally
+
+            // TODO: explore esto, hacer la deteccion de video, pocas veces por segundo.
+            // if(frameCounter != 15){
+            //    frameCounter ++;
+            //    unlock();
+            //    continue;
+            // }
+            // frameCounter = 0;
+            // ofLogNotice() <<  "tick" << "\n";
 
             // Convertir a escala de grises
             imgPaso1 = imgInput;
@@ -193,16 +210,22 @@ void TrackerVideo::threadedFunction(){
 
             // Encontrar contornos
             // TODO: traer lo de Johnny
-            contourFinder.findContours(imgPaso3, PERSONA_TAMANO_MINIMO, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos
+            contourFinder.findContours(imgPaso3, tamano, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos,
 
             unlock();
 
-            for(i=0; i<contourFinder.nBlobs; i++){
-               rectangle = contourFinder.blobs.at(i).boundingRect;
-               gente.at(i).width = rectangle.width;
-               gente.at(i).height = rectangle.height;
-               gente.at(i).x = rectangle.x;
-               gente.at(i).y = rectangle.y;
+            for(i=0; i<NUM_PERSONAS; i++){
+               if(i < contourFinder.nBlobs){
+                  rectangle = contourFinder.blobs.at(i).boundingRect;
+                  gente.at(i).activa = true;
+                  gente.at(i).width = (float)rectangle.width / (float)CAMARA_WIDTH;
+                  gente.at(i).height = (float)rectangle.height / (float)CAMARA_HEIGHT;
+                  gente.at(i).x = (float)rectangle.x / (float)CAMARA_WIDTH;
+                  gente.at(i).y = (float)rectangle.y / (float)CAMARA_HEIGHT;
+               }
+               else{
+                  gente.at(i).activa = false;
+               }
             }
          }
       }

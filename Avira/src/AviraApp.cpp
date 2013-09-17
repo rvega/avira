@@ -18,7 +18,7 @@ void AviraApp::exit(){
 
 void AviraApp::update(){
    if(!tracker.lock()){
-      ofLogNotice() << "Choque de locks. AviraApp::update" << "\n";
+      // ofLogNotice() << "Choque de locks. AviraApp::update" << "\n";
    }
    else{
       renderer.setGente( tracker.getGente() );

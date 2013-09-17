@@ -5,11 +5,12 @@ class Persona{
    public:
       explicit Persona();
       virtual ~Persona();
-      int x;
-      int y;
-      int height;
-      int width;      
-      void setColor(int r, int g, int b);
+      float x;
+      float y;
+      float height;
+      float width;      
+      bool activa;
+      void setColor(float r, float g, float b);
       ofColor getColor();
 
    private:

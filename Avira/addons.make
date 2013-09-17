@@ -1,2 +1,4 @@
 ofxOpenCv
+ofxXmlSettings
 ofxUI
+ofxThreadedImageLoader

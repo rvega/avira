@@ -14,6 +14,7 @@ class Gui{
    private:
       bool fullscreen;
       ofxUICanvas gui;
+      ofxUICanvas gui2;
       void guiEvent(ofxUIEventArgs &e);
       void keyPressed(ofKeyEventArgs& data);
       void mousePressed(ofMouseEventArgs& data);

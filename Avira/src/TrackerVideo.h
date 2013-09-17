@@ -28,6 +28,7 @@ class TrackerVideo: public ofThread{
       bool useCamara;
       std::map<int, Persona> gente;
       int threshold;
+      int tamano;
 
       void captureFondo();
       void threadedFunction();
