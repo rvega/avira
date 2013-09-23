@@ -5,7 +5,7 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 Animacion::Animacion(float x, float y):
-x(x), y(y), width(0.1), fps(10), fullscreen(false)
+x(x), y(y), width(0.1), fps(12), loop(true), playing(false), fullscreen(false), frameIndex(0)
 {
    ofRegisterGetMessages(this);
 }
@@ -25,6 +25,7 @@ Animacion::~Animacion(){
 void Animacion::setPath(string val){
    ofDirectory directorio;
    directorio.listDir(val);
+   directorio.sort();
    imagenes.resize( directorio.numFiles() );
    for(int i=0; i < directorio.numFiles(); ++i) {
       cargadorImagenes.loadFromDisk(imagenes[i], directorio.getPath(i));
@@ -50,11 +51,12 @@ void Animacion::gotMessage(ofMessage& msg){
 }
 
 void Animacion::play(){
+   frameIndex = 0;
+   startTime = ofGetElapsedTimef();
    playing = true;
 }
 
 void Animacion::stop(){
-   // TODO: rewind
    playing = false;
 }
 
@@ -65,7 +67,14 @@ void Animacion::stop(){
 void Animacion::drawImagen(){
    if(imagenes.size() == 0) return;
 
-   int frameIndex = (int)(ofGetElapsedTimef() * fps) % imagenes.size();
+   float time = ofGetElapsedTimef() - startTime;
+   frameIndex = (unsigned int)(time * (float)fps) % imagenes.size();
+
+   if(!loop && (frameIndex == (imagenes.size()-1))){
+      playing = false;
+      frameIndex = imagenes.size()-1;
+   }
+
    int imgX, imgY, imgH, imgW;
    if(fullscreen){
       imgX = x * VENTANA_WIDTH;

@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include "constantes.h"
 
-#include "AnimacionEscena1.h"
+#include "AnimacionEscenaAvira.h"
 
 //=======================//
 //  SETUP Y DESTRUCCION  //
@@ -9,9 +9,10 @@
 Renderer::Renderer():
    fullscreen(false)
 {
-   Animacion* escena1 = new AnimacionEscena1(0.1, 0.2);
-   escena1->play();
-   animaciones.push_back(escena1);
+   Animacion* escenaAvira = new AnimacionEscenaAvira(0.1, 0.2);
+   //sleep(3);
+   escenaAvira->play();
+   animaciones.push_back(escenaAvira);
 
    ofRegisterGetMessages(this);
 }

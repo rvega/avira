@@ -11,21 +11,23 @@ class Animacion{
       float height;
       float width;
       int fps;
+      bool loop;
       virtual void draw();
       virtual void play();
       void stop();
       void setPath(string val);
       void gotMessage(ofMessage& msg);
+      bool playing;
 
    private:
-      bool playing;
       bool fullscreen;
       std::vector<ofImage> imagenes;
       ofxThreadedImageLoader cargadorImagenes;
       void drawImagen();
       void drawSubAnimaciones();
+      unsigned int frameIndex;
 
    protected:
+      float startTime;
       std::vector<Animacion*> animaciones;
-
 };
