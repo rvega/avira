@@ -10,8 +10,9 @@ class Persona{
       float height;
       float width;      
       bool activa;
-      void setColor(float r, float g, float b);
-      ofColor getColor();
+      void setBorderColor(float r, float g, float b);
+      void drawBorder();
+
 
    private:
       ofColor color;

@@ -1,6 +1,6 @@
 # add custom variables to this file
 
-# MAKEFLAGS += --quiet
+MAKEFLAGS += --quiet
 
 # OF_ROOT allows to move projects outside apps/* just set this variable to the
 # absoulte path to the OF root folder

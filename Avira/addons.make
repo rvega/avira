@@ -1,3 +1,4 @@
+ofxTween
 ofxOpenCv
 ofxXmlSettings
 ofxUI

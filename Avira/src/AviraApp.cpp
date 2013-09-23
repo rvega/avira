@@ -23,13 +23,14 @@ void AviraApp::update(){
    else{
       renderer.setGente( tracker.getGente() );
       renderer.setImgOutput( tracker.getImgInput() );
-      if(!fullscreen){
-         renderer.setImg1( tracker.getImgFondo() );
-         renderer.setImg2( tracker.getImgPaso1() );
-         renderer.setImg3( tracker.getImgPaso2() );
-         renderer.setImg4( tracker.getImgPaso3() );
-      }
       tracker.unlock();
+   }
+
+   if(!fullscreen){
+      renderer.setImg1( tracker.getImgFondo() );
+      renderer.setImg2( tracker.getImgPaso1() );
+      renderer.setImg3( tracker.getImgPaso2() );
+      renderer.setImg4( tracker.getImgPaso3() );
    }
 }
 

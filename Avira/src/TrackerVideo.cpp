@@ -8,6 +8,7 @@
 //=======================//
 
 TrackerVideo::TrackerVideo():
+   fullscreen(false),
    useCamara(true),
    threshold(THRESHOLD_DEFAULT),
    tamano(PERSONA_TAMANO_DEFAULT)
@@ -17,6 +18,13 @@ TrackerVideo::TrackerVideo():
    imgPaso2.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso3.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgFondo.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
+   imgWork.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
+
+   for(int i=0; i<NUM_PERSONAS; i++){
+      Persona personaNueva;
+      personaNueva.setBorderColor(ofRandom(0,255), ofRandom(0,255), ofRandom(0,255));
+      gente[i] = personaNueva;
+   }
 
    ofRegisterGetMessages(this);
 }
@@ -29,6 +37,7 @@ TrackerVideo::~TrackerVideo(){
    imgPaso2.clear();
    imgPaso3.clear();
    imgFondo.clear();
+   imgWork.clear();
 }
 
 void TrackerVideo::start(){
@@ -75,25 +84,35 @@ void TrackerVideo::gotMessage(ofMessage& msg){
    if(msg.message == "CAPTURAR_FONDO"){
       captureFondo();
    }
+
    else if(msg.message == "USAR_CAMARA"){
       stop();
       useCamara = true;
       start();
    }
+
    else if(msg.message == "USAR_PELICULA"){
       stop();
       useCamara = false;
       start();
    }
 
-   if(string::npos != msg.message.find("TAMANO_MINIMO")){
+   else if(string::npos != msg.message.find("TAMANO_MINIMO")){
       string val = msg.message.substr( msg.message.find(" ") );
       tamano = ofToFloat(val);
    }
 
-   if(string::npos != msg.message.find("THRESHOLD")){
+   else if(string::npos != msg.message.find("THRESHOLD")){
       string val = msg.message.substr( msg.message.find(" ") );
       threshold = ofToFloat(val);
+   }
+
+   else if(msg.message == "FULLSCREEN_ON"){
+      fullscreen = true;
+   }
+
+   else if(msg.message == "FULLSCREEN_OFF"){
+      fullscreen = false;
    }
 }
 
@@ -150,13 +169,8 @@ void TrackerVideo::threadedFunction(){
    unsigned char* pixels;
    ofxCvContourFinder contourFinder;
    ofRectangle rectangle;
-   int frameCounter = 0;
+   // int frameCounter = 0;
    int i;
-   for(i=0; i<NUM_PERSONAS; i++){
-      Persona personaNueva;
-      personaNueva.setColor(ofRandom(0,255), ofRandom(0,255), ofRandom(0,255));
-      gente[i] = personaNueva;
-   }
 
    while(isThreadRunning()){
 
@@ -171,7 +185,7 @@ void TrackerVideo::threadedFunction(){
       }
 
       if(frameEsNuevo){
-         // Agarre pixeles de la imagen de entrada y convierta a escala de grises
+         // Agarre pixeles de la imagen de entrada
          if(useCamara){
             pixels = camara.getPixels();
          }
@@ -181,12 +195,10 @@ void TrackerVideo::threadedFunction(){
 
 
          // Vamos a escribir a imgInput, pongale lock.
-         if(!lock()){
-            // ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
-         }
-         else{
-            imgInput.setRoiFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
-            imgInput.mirror(false, true); // Flip horizontally
+         // if(!lock()){
+         //    ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
+         // }
+         // else{
 
             // TODO: explore esto, hacer la deteccion de video, pocas veces por segundo.
             // if(frameCounter != 15){
@@ -198,36 +210,53 @@ void TrackerVideo::threadedFunction(){
             // ofLogNotice() <<  "tick" << "\n";
 
             // Convertir a escala de grises
-            imgPaso1 = imgInput;
+            if(lock()){
+               imgInput.setRoiFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
+               imgInput.mirror(false, true); // Flip horizontally
+               imgWork = imgInput;
+
+               if(!fullscreen) imgPaso1 = imgInput;
+
+               unlock();
+            }
 
             // Restar la imagen gris (paso1) de el fondo.
-            imgPaso2.absDiff(imgFondo, imgPaso1);
-            imgPaso3 = imgPaso2;
+            imgWork.absDiff(imgFondo, imgWork);
+            if(!fullscreen && lock()){
+               imgPaso2 = imgWork;
+               unlock();
+            } 
+
 
             // Aplicar threshold a la resta (paso2)
-            // TODO: threshold desde GUI
-            imgPaso3.threshold(threshold);
+            imgWork.threshold(threshold);
+            if(!fullscreen && lock()){
+               imgPaso3 = imgWork;
+               unlock();
+            } 
 
             // Encontrar contornos
             // TODO: traer lo de Johnny
-            contourFinder.findContours(imgPaso3, tamano, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos,
+            contourFinder.findContours(imgWork, tamano, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos,
 
-            unlock();
+            if(lock()){
+               for(i=0; i<NUM_PERSONAS; i++){
+                  if(i < contourFinder.nBlobs){
+                     rectangle = contourFinder.blobs.at(i).boundingRect;
+                     gente.at(i).activa = true;
+                     gente.at(i).width = (float)rectangle.width / (float)CAMARA_WIDTH;
+                     gente.at(i).height = (float)rectangle.height / (float)CAMARA_HEIGHT;
+                     gente.at(i).x = (float)rectangle.x / (float)CAMARA_WIDTH;
+                     gente.at(i).y = (float)rectangle.y / (float)CAMARA_HEIGHT;
+                  }
+                  else{
+                     gente.at(i).activa = false;
+                  }
+               }
 
-            for(i=0; i<NUM_PERSONAS; i++){
-               if(i < contourFinder.nBlobs){
-                  rectangle = contourFinder.blobs.at(i).boundingRect;
-                  gente.at(i).activa = true;
-                  gente.at(i).width = (float)rectangle.width / (float)CAMARA_WIDTH;
-                  gente.at(i).height = (float)rectangle.height / (float)CAMARA_HEIGHT;
-                  gente.at(i).x = (float)rectangle.x / (float)CAMARA_WIDTH;
-                  gente.at(i).y = (float)rectangle.y / (float)CAMARA_HEIGHT;
-               }
-               else{
-                  gente.at(i).activa = false;
-               }
+               unlock();
             }
-         }
+         // }
       }
       sleep(1);
    }

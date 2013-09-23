@@ -4,3 +4,6 @@
 [submodule "addons/ofxUI"]
 	path = addons/ofxUI
 	url = https://github.com/rezaali/ofxUI.git
+[submodule "addons/ofxTween"]
+	path = addons/ofxTween
+	url = https://github.com/arturoc/ofxTween.git

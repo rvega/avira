@@ -1,5 +1,7 @@
-#include "Renderer.h",
+#include "Renderer.h"
 #include "constantes.h"
+
+#include "AnimacionEscena1.h"
 
 //=======================//
 //  SETUP Y DESTRUCCION  //
@@ -7,8 +9,7 @@
 Renderer::Renderer():
    fullscreen(false)
 {
-   Animacion* escena1 = new Animacion(600, 400, 30);
-   escena1->setPath("animaciones/accesorios/mapa");
+   Animacion* escena1 = new AnimacionEscena1(0.1, 0.2);
    escena1->play();
    animaciones.push_back(escena1);
 
@@ -16,7 +17,7 @@ Renderer::Renderer():
 }
 
 Renderer::~Renderer() {
-   for(int i = 0; i < animaciones.size(); i++) {
+   for(unsigned int i = 0; i < animaciones.size(); i++) {
       delete animaciones.at(i);
    }
    ofUnregisterGetMessages(this);
@@ -83,6 +84,7 @@ void Renderer::gotMessage(ofMessage& msg){
 template<class imageType>
 void Renderer::drawImage(int x, int y, string title, imageType img){
    ofPushMatrix();
+   ofSetColor(255,255,255);
    ofTranslate(x, y);
    ofRect(0,0,IMAGEN_PEQUENA_WIDTH+2, IMAGEN_PEQUENA_HEIGHT+2);
    ofDrawBitmapString(title, 0, -5);
@@ -91,9 +93,6 @@ void Renderer::drawImage(int x, int y, string title, imageType img){
 }
 
 void Renderer::draw(){
-   ofPushMatrix();
-   ofPushStyle();
-   ofSetColor(255,255,255);
    if(!fullscreen){
       drawImage<ofxCvGrayscaleImage>(POSICION_1_X, POSICION_1_Y, title1, img1);
       drawImage(POSICION_2_X, POSICION_2_Y, title2, img2);
@@ -103,26 +102,16 @@ void Renderer::draw(){
       drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
 
       for(int i=0; i<NUM_PERSONAS; i++){
-         if(!gente.at(i).activa) continue;
-
-         ofNoFill();
-         ofSetColor(gente.at(i).getColor());
-         float x,y,w,h;
-         x = POSICION_6_X + (gente.at(i).x * IMAGEN_PEQUENA_WIDTH);
-         y = POSICION_6_Y + (gente.at(i).y * IMAGEN_PEQUENA_HEIGHT);
-         w = gente.at(i).width * IMAGEN_PEQUENA_WIDTH;
-         h = gente.at(i).height * IMAGEN_PEQUENA_HEIGHT;
-         ofRect(x,y,w,h);
-         ofFill();
-      }
-
-      for(int i=0; i<animaciones.size(); i++){
-         animaciones.at(i)->draw();
+         if(gente.at(i).activa){
+            gente.at(i).drawBorder();
+         }
       }
    }
    else{
       imgOutput.draw(0, 0, IMAGEN_GRANDE_WIDTH, IMAGEN_GRANDE_HEIGHT);
    }
-   ofPopStyle();
-   ofPopMatrix();
+
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->draw();
+   }
 }

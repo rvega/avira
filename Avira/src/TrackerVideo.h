@@ -25,6 +25,9 @@ class TrackerVideo: public ofThread{
       ofxCvGrayscaleImage imgPaso2;
       ofxCvGrayscaleImage imgPaso3;
       ofxCvGrayscaleImage imgFondo;
+      ofxCvGrayscaleImage imgWork;
+
+      bool fullscreen;
       bool useCamara;
       std::map<int, Persona> gente;
       int threshold;
