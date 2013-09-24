@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include "constantes.h"
-
+#include "AnimacionEscenaPajaro.h"
 #include "AnimacionEscenaAvira.h"
 
 //=======================//
@@ -13,6 +13,10 @@ Renderer::Renderer():
    //sleep(3);
    escenaAvira->play();
    animaciones.push_back(escenaAvira);
+
+   Animacion* escenaPajaro = new AnimacionEscenaPajaro(0.1, 0.0);
+   escenaPajaro -> play();
+   animaciones.push_back(escenaPajaro);
 
    ofRegisterGetMessages(this);
 }
