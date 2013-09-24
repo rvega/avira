@@ -10,8 +10,10 @@ class AnimacionEscenaPajaro: public Animacion{
       virtual ~AnimacionEscenaPajaro();
       void play();
       void draw();
+      void setCualAccesorio(string val);
 
    private:
+      string cualAccesorio;
       ofxTween tween;
       ofxEasingLinear easingLinear;
       ofxTween multitween;
