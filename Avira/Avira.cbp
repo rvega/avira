@@ -27,75 +27,6 @@
 				<Option projectLinkerOptionsRelation="2" />
 			</Target>
 		</Build>
-		<Unit filename="config.make">
-			<Option virtualFolder="build config" />
-		</Unit>
-		<Unit filename="src/Animacion.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Animacion.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionCabeza.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionCabeza.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionEscenaAvira.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionEscenaAvira.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionEscenaPajaro.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionEscenaPajaro.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionMunecoAvira.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AnimacionMunecoAvira.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AviraApp.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/AviraApp.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Gui.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Gui.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Persona.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Persona.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Renderer.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/Renderer.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/TrackerVideo.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/TrackerVideo.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/constantes.h">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/main.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
 		<Unit filename="../openFrameworks/addons/ofxOpenCv/libs/opencv/include/opencv/cv.h">
 			<Option virtualFolder="addons/ofxOpenCv/libs/opencv/include/opencv" />
 		</Unit>
@@ -395,6 +326,87 @@
 		</Unit>
 		<Unit filename="../openFrameworks/addons/ofxOpenCv/src/ofxOpenCv.h">
 			<Option virtualFolder="addons/ofxOpenCv/src" />
+		</Unit>
+		<Unit filename="config.make">
+			<Option virtualFolder="build config" />
+		</Unit>
+		<Unit filename="src/Animacion.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Animacion.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionCabeza.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionCabeza.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionEscenaAvira.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionEscenaAvira.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionEscenaPajaro.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionEscenaPajaro.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionMundo.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionMundo.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionMunecoAvira.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionMunecoAvira.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionPajaro.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AnimacionPajaro.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AviraApp.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/AviraApp.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Gui.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Gui.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Persona.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Persona.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Renderer.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Renderer.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/TrackerVideo.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/TrackerVideo.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/constantes.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/main.cpp">
+			<Option virtualFolder="src/" />
 		</Unit>
 		<Extensions>
 			<code_completion />
