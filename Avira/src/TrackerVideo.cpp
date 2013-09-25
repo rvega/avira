@@ -11,10 +11,11 @@ TrackerVideo::TrackerVideo():
    fullscreen(false),
    useCamara(true),
    threshold(THRESHOLD_DEFAULT),
+   threshold2(THRESHOLD_DEFAULT),
    tamano(SLIDER_TAMANO_DEFAULT),
    tamanoMax(SLIDER_TAMANO_DEFAULT),
-   blur(1)
-
+   blur(1),
+   frameCounter(5)
 {
    imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso1.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
@@ -50,7 +51,7 @@ void TrackerVideo::start(){
       // Abrir el stream de la camara
       camara.setVerbose(false);
       camara.setDeviceID(2);
-      camara.setDesiredFrameRate(1);
+      camara.setDesiredFrameRate(30);
       camara.initGrabber(CAMARA_WIDTH, CAMARA_HEIGHT);
    }
    else{
@@ -125,9 +126,19 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       tamanoMax = ofToFloat(val);
    }
 
-   else if(string::npos != msg.message.find("THRESHOLD")){
+   else if(string::npos != msg.message.find("THRESHOLD1")){
       string val = msg.message.substr( msg.message.find(" ") );
       threshold = ofToFloat(val);
+   }
+
+   else if(string::npos != msg.message.find("THRESHOLD2")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      threshold2 = ofToFloat(val);
+   }
+
+   else if(string::npos != msg.message.find("FRAME_COUNTER")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      frameCounter = ofToInt(val);
    }
 
    else if(msg.message == "FULLSCREEN_ON"){
@@ -136,6 +147,15 @@ void TrackerVideo::gotMessage(ofMessage& msg){
 
    else if(msg.message == "FULLSCREEN_OFF"){
       fullscreen = false;
+   }
+
+   else if(string::npos != msg.message.find("POSICION_PELICULA")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      pelicula.setPosition(ofToFloat(val));
+   }
+
+   else if(msg.message == "PLAY"){
+      pelicula.setPaused( !pelicula.isPaused() );
    }
 }
 
@@ -197,7 +217,7 @@ void TrackerVideo::threadedFunction(){
    unsigned char* pixels;
    ofxCvContourFinder contourFinder;
    ofRectangle rectangle;
-   // int frameCounter = 0;
+   int frameCounterNow = 0;
    int i;
 
    while(isThreadRunning()){
@@ -221,77 +241,72 @@ void TrackerVideo::threadedFunction(){
             pixels = pelicula.getPixels();
          }
 
+         if(lock()){
+            imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
+            imgInput.mirror(false, true); // Flip horizontally
 
-         // Vamos a escribir a imgInput, pongale lock.
-         // if(!lock()){
-         //    ofLogNotice() << "Choque de locks. TrackerVideo::threaddedFunction" << "\n";
-         // }
-         // else{
-
-            // TODO: explore esto, hacer la deteccion de video, pocas veces por segundo.
-            // if(frameCounter != 15){
-            //    frameCounter ++;
-            //    unlock();
-            //    continue;
-            // }
-            // frameCounter = 0;
-            // ofLogNotice() <<  "tick" << "\n";
-
-            // Paso1: Convertir a escala de grises
-            if(lock()){
-               imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
-               imgInput.mirror(false, true); // Flip horizontally
-               imgWork = imgInput;
-
-               if(!fullscreen) imgPaso1 = imgInput;
-
+            // Hacer la deteccion de video pocas veces por segundo.
+            if(frameCounterNow != frameCounter){
+               frameCounterNow ++;
                unlock();
+               continue;
             }
+            frameCounterNow = 0;
 
-            // Paso2: Restar la imagen gris de el fondo.
-            imgWork.absDiff(imgFondo, imgWork);
-            if(!fullscreen && lock()){
-               imgPaso2 = imgWork;
-               unlock();
-            } 
+            // Paso0: Convertir a escala de grises
+            imgWork = imgInput;
+            unlock();
+         }
 
+         // Paso1: Restar la imagen gris de el fondo.
+         imgWork.absDiff(imgFondo, imgWork);
+         if(!fullscreen && lock()){
+            imgPaso1 = imgWork;
+            unlock();
+         } 
 
-            // Paso3: Aplicar threshold
-            imgWork.threshold(threshold);
-            if(!fullscreen && lock()){
-               imgPaso3 = imgWork;
-               unlock();
-            } 
+         // Paso2 Aplicar threshold
+         imgWork.threshold(threshold);
+         if(!fullscreen && lock()){
+            imgPaso2 = imgWork;
+            unlock();
+         } 
 
-            // Paso4: Blur
-            imgWork.blurGaussian(blur);
-            if(!fullscreen && lock()){
-               imgPaso4 = imgWork;
-               unlock();
-            } 
+         // Paso3: Blur
+         imgWork.blurGaussian(blur);
+         if(!fullscreen && lock()){
+            imgPaso3 = imgWork;
+            unlock();
+         } 
 
-            // Encontrar contornos
-            // TODO: traer lo de Johnny
-            contourFinder.findContours(imgWork, tamano, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
+         // Paso4 Threshold otra vez
+         imgWork.threshold(threshold2);
+         if(!fullscreen && lock()){
+            imgPaso4 = imgWork;
+            unlock();
+         } 
 
-            if(lock()){
-               for(i=0; i<NUM_PERSONAS; i++){
-                  if(i < contourFinder.nBlobs){
-                     rectangle = contourFinder.blobs.at(i).boundingRect;
-                     gente.at(i).activa = true;
-                     gente.at(i).width = (float)rectangle.width / (float)CAMARA_WIDTH;
-                     gente.at(i).height = (float)rectangle.height / (float)CAMARA_HEIGHT;
-                     gente.at(i).x = (float)rectangle.x / (float)CAMARA_WIDTH;
-                     gente.at(i).y = (float)rectangle.y / (float)CAMARA_HEIGHT;
-                  }
-                  else{
-                     gente.at(i).activa = false;
-                  }
+         // Encontrar contornos
+         contourFinder.findContours(imgWork, tamano, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
+
+         if(lock()){
+            for(i=0; i<NUM_PERSONAS; i++){
+               if(i < contourFinder.nBlobs){
+                  rectangle = contourFinder.blobs.at(i).boundingRect;
+                  gente.at(i).setActiva(true);
+                  gente.at(i).setDimensions(
+                     (float)rectangle.x/(float)CAMARA_WIDTH,
+                     (float)rectangle.y / (float)CAMARA_HEIGHT,
+                     (float)rectangle.width/(float)CAMARA_WIDTH,
+                     (float)rectangle.height/(float)CAMARA_HEIGHT
+                  );
                }
-
-               unlock();
+               else{
+                  gente.at(i).setActiva(false);
+               }
             }
-         // }
+            unlock();
+         }
       }
       sleep(1);
    }

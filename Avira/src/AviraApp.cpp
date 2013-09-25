@@ -3,10 +3,10 @@
 void AviraApp::setup(){
    fullscreen = false;
    renderer.setTitle1("Fondo:");
-   renderer.setTitle2("Grises:");
-   renderer.setTitle3("Diferencia:");
-   renderer.setTitle4("Thresholded:");
-   renderer.setTitle5("Blured:");
+   renderer.setTitle2("Diferencia:");
+   renderer.setTitle3("Thresholded:");
+   renderer.setTitle4("Blured:");
+   renderer.setTitle5("Thresholded 2:");
    gui.setup();
    tracker.start();
    sleep(1);

@@ -1,20 +1,25 @@
 <Widget>
     <Kind>4</Kind>
     <Name>Threshold</Name>
-    <Value>54.421772003</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>Tamanho Minimo</Name>
-    <Value>4551.020507812</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>Tamanho Maximo</Name>
-    <Value>63877.546875000</Value>
+    <Value>65.894035339</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>Blur</Name>
-    <Value>30.333332062</Value>
+    <Value>80.390731812</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>Threshold2</Name>
+    <Value>9.523809433</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>Tamanho Minimo</Name>
+    <Value>788.410583496</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>Tamanho Maximo</Name>
+    <Value>27880.794921875</Value>
 </Widget>

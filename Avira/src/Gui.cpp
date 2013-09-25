@@ -6,59 +6,67 @@ Gui::Gui():
 
    // Invoca el constructor de ofxUI para la variable gui:
    gui(GUI_POS_X, GUI_POS_Y, GUI_WIDTH, 0),
-   gui2(GUI_POS_X+GUI_WIDTH+8, GUI_POS_Y+18, GUI_WIDTH, 0)
+   gui2(GUI_POS_X+GUI_WIDTH+8, GUI_POS_Y+18, GUI_WIDTH*2, 0),
+   gui3(GUI_POS_X+3*GUI_WIDTH+8, GUI_POS_Y+18, GUI_WIDTH*2, 0)
 {}
 
 Gui::~Gui(){}
 
 void Gui::setup(){
-   // ofColor bgColor = ofColor(50, 50, 50);
-   // gui.setColorBack(bgColor);
-   // gui2.setColorBack(bgColor);
-
    gui.setWidgetFontSize(OFX_UI_FONT_SMALL);
    gui2.setWidgetFontSize(OFX_UI_FONT_SMALL);
+   gui3.setWidgetFontSize(OFX_UI_FONT_SMALL);
 
-   gui.addLabel("Opciones", OFX_UI_FONT_MEDIUM);
-   gui.addSpacer(GUI_WIDTH,0);
    gui.addButton("Usar Camara", true);
    gui.addButton("Usar Pelicula", true);
    gui.addButton("Capturar Fondo", true);
    gui.addButton("Pantalla Completa", true);
-   gui.addSpacer(GUI_WIDTH, 0);
-   gui.addSpacer(GUI_WIDTH, 0);
    gui.autoSizeToFitWidgets();
 
-   gui2.addSpacer(GUI_WIDTH, 0);
-   gui2.addSlider("Threshold", 0, 100, THRESHOLD_DEFAULT);
+   gui2.addSlider("Threshold", THRESHOLD1_MIN, THRESHOLD1_MAX, THRESHOLD_DEFAULT);
+   gui2.addSlider("Blur", BLUR_MIN, BLUR_MAX, BLUR_DEFAULT);
+   gui2.addSlider("Threshold2", THRESHOLD2_MIN, THRESHOLD2_MAX, THRESHOLD_DEFAULT);
    gui2.addSlider("Tamanho Minimo", SLIDER_TAMANO_MIN_LEFT, SLIDER_TAMANO_MIN_RIGHT, SLIDER_TAMANO_DEFAULT);
    gui2.addSlider("Tamanho Maximo", SLIDER_TAMANO_MAX_LEFT, SLIDER_TAMANO_MAX_RIGHT, SLIDER_TAMANO_DEFAULT);
-   gui2.addSlider("Blur", 1, 99, 1);
    gui2.autoSizeToFitWidgets();
+
+   gui3.addSlider("Frame Counter", 1.0, 30.0, 5.0);
+   gui3.addButton("Play/Pausa", true);
+   gui3.addSlider("Posicion Pelicula", 0.0, 1.0, 0.0);
+   gui3.autoSizeToFitWidgets();
 
    ofAddListener(gui.newGUIEvent, this, &Gui::guiEvent);
    ofAddListener(gui2.newGUIEvent, this, &Gui::guiEvent);
+   ofAddListener(gui3.newGUIEvent, this, &Gui::guiEvent);
+
    ofAddListener(ofEvents().mousePressed, this, &Gui::mousePressed);
    ofAddListener(ofEvents().keyPressed, this, &Gui::keyPressed);
    
-   gui.loadSettings("settings1.xml");
    gui2.loadSettings("settings2.xml");
+   gui3.loadSettings("settings3.xml");
 }
 
 void Gui::exit(){
-   gui.saveSettings("settings1.xml");
    gui2.saveSettings("settings2.xml");
+   gui3.saveSettings("settings3.xml");
 
    ofRemoveListener(ofEvents().mousePressed, this, &Gui::mousePressed);
    ofRemoveListener(ofEvents().keyPressed, this, &Gui::keyPressed);
    ofRemoveListener(gui.newGUIEvent, this, &Gui::guiEvent);
    ofRemoveListener(gui2.newGUIEvent, this, &Gui::guiEvent);
+   ofRemoveListener(gui3.newGUIEvent, this, &Gui::guiEvent);
 }
 
 void Gui::guiEvent(ofxUIEventArgs &e) {
    if(e.widget->getName()=="Threshold") {
       float value = ((ofxUISlider*)(e.widget))->getScaledValue();
-      ofSendMessage("THRESHOLD " + ofToString(value) );
+      ofSendMessage("THRESHOLD1 " + ofToString(value) );
+      return;
+   }
+
+   if(e.widget->getName()=="Threshold2") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("THRESHOLD2 " + ofToString(value) );
       return;
    }
 
@@ -74,9 +82,21 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
       return;
    }
 
+   if(e.widget->getName()=="Posicion Pelicula") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("POSICION_PELICULA " + ofToString(value) );
+      return;
+   }
+
    if(e.widget->getName()=="Tamanho Maximo") {
       float value = ((ofxUISlider*)(e.widget))->getScaledValue();
       ofSendMessage("TAMANO_MAXIMO " + ofToString(value) );
+      return;
+   }
+
+   if(e.widget->getName()=="Frame Counter") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("FRAME_COUNTER " + ofToString(value) );
       return;
    }
 
@@ -85,6 +105,7 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
       fullscreen = true;
       gui.setVisible(false);
       gui2.setVisible(false);
+      gui3.setVisible(false);
       ofSendMessage("FULLSCREEN_ON");
    }
    else if(e.widget->getName()=="Capturar Fondo" && value) {
@@ -96,6 +117,9 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
    else if(e.widget->getName()=="Usar Pelicula" && value) {
       ofSendMessage("USAR_PELICULA");
    }
+   else if(e.widget->getName()=="Play/Pausa" && value) {
+      ofSendMessage("PLAY");
+   }
 }
 
 void Gui::mousePressed(ofMouseEventArgs& data){
@@ -103,6 +127,7 @@ void Gui::mousePressed(ofMouseEventArgs& data){
       fullscreen = false;
       gui.setVisible(true);
       gui2.setVisible(true);
+      gui3.setVisible(true);
       ofSendMessage("FULLSCREEN_OFF");
    }
 }

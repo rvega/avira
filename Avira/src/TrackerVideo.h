@@ -29,13 +29,15 @@ class TrackerVideo: public ofThread{
       ofxCvGrayscaleImage imgFondo;
       ofxCvGrayscaleImage imgWork;
 
+      map<int, Persona> gente;
       bool fullscreen;
       bool useCamara;
-      std::map<int, Persona> gente;
       int threshold;
+      int threshold2;
       int tamano;
       int tamanoMax;
       int blur;
+      int frameCounter;
 
       void captureFondo();
       void threadedFunction();

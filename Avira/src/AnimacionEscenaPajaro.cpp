@@ -33,7 +33,7 @@ Animacion(x,y)
 
 // AnimacionEscenaPajaro::~AnimacionEscenaPajaro(){ }
 
-// void AnimacionEscenaPajaro::setCualAccesorio(string val){
+void AnimacionEscenaPajaro::setCualAccesorio(string val){
 //    // Quitar animaciones.at(1) osea el accesorio.
 //    // Quitar animaciones.at(2) osea la consecuencia del accesorio (borbujas p. ej.)
 // 
@@ -52,8 +52,8 @@ Animacion(x,y)
 //       animaciones.push_back(mundi2); // En el caso del mundo, la consecuencia es la misma animacion de el accesorio.
 //    }
 //    // etc...
-// }
-// 
+}
+
 
 void AnimacionEscenaPajaro::play(){
    int duracionMovimientoPajaro = 5000;

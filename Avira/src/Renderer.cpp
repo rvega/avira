@@ -115,7 +115,7 @@ void Renderer::draw(){
       drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
 
       for(int i=0; i<NUM_PERSONAS; i++){
-         if(gente.at(i).activa){
+         if(gente.at(i).getActiva() && gente.at(i).getQuieta()){
             gente.at(i).drawBorder();
          }
       }

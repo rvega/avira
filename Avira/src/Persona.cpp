@@ -1,8 +1,9 @@
 #include "Persona.h"
 #include "constantes.h"
+#include "ofMain.h"
 
 Persona::Persona():
-x(0), y(0), height(0), width(0), activa(false)
+x(0), y(0), height(0), width(0), activa(false), quieta(false)
 { }
 
 Persona::~Persona(){}
@@ -30,4 +31,43 @@ void Persona::drawBorder(){
    ofRect(x,y,w,h);
 
    ofPopStyle();
+}
+
+bool Persona::getQuieta(){
+   return quieta;
+}
+
+bool Persona::getActiva(){
+   return activa;
+}
+
+void Persona::setActiva(bool val){
+   activa=val;
+}
+
+void Persona::setDimensions(float newX, float newY, float newW, float newH){
+   // Solo personas en la mitad de abajo del cuadro y
+   // quietas mas de 1 seg
+   if(newY > 0.5){
+      float dist = pow(x-newX,2) + pow(y-newY,2);
+      ofLogNotice() << dist;
+      if(dist <= 0.0002){
+         float time = ofGetElapsedTimef();
+         if(time - startTime >= 1.0){
+            quieta=true;
+         }
+         else{
+            quieta=false;
+         }
+      }
+      else{
+         startTime = ofGetElapsedTimef();
+         quieta=false;
+      }
+   }
+
+   x = newX;
+   y = newY;
+   width = newW;
+   height = newH;
 }
