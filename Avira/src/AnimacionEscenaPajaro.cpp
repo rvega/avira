@@ -30,37 +30,30 @@ Animacion(x,y)
 
 }
 
-AnimacionEscenaPajaro::~AnimacionEscenaPajaro(){ }
 
-void AnimacionEscenaPajaro::setCualAccesorio(string val){
+// AnimacionEscenaPajaro::~AnimacionEscenaPajaro(){ }
 
-   for(unsigned int i = 1; i <= animaciones.size();i++){
-
-        animaciones.pop_back();
-        //cout << "valor de i:"<< i<< "tamano: "<<animaciones.size()<<endl;
-   }
-
-
-   // Quitar animaciones.at(1) osea el accesorio.
-   // Quitar animaciones.at(2) osea la consecuencia del accesorio (borbujas p. ej.)
-
-   if(val == "probeta"){
-      AnimacionProbeta* probeta = new AnimacionProbeta(x+0.01, y+0.02);
-      animaciones.push_back(probeta);
-
-      AnimacionBurbujas* burbujas = new AnimacionBurbujas(x+0.01, y+0.02);
-      animaciones.push_back(burbujas);
-   }
-   else if(val=="mundo"){
-      AnimacionMundo* mundi = new AnimacionMundo(x+0.01, y+0.02);
-      animaciones.push_back(mundi);
-
-      AnimacionMundo* mundi2 = new AnimacionMundo(x+0.01, y+0.02);
-      animaciones.push_back(mundi2); // En el caso del mundo, la consecuencia es la misma animacion de el accesorio.
-   }
-   // etc...
-}
-
+// void AnimacionEscenaPajaro::setCualAccesorio(string val){
+//    // Quitar animaciones.at(1) osea el accesorio.
+//    // Quitar animaciones.at(2) osea la consecuencia del accesorio (borbujas p. ej.)
+// 
+//    if(val == "probeta"){
+//       AnimacionProbeta* probeta = new AnimacionProbeta(x+0.01, y+0.02);
+//       animaciones.push_back(probeta);
+// 
+//       AnimacionBurbujas* burbujas = new AnimacionBurbujas(x+0.01, y+0.02);
+//       animaciones.push_back(burbujas);
+//    }
+//    else if(val=="mundo"){
+//       AnimacionMundo* mundi = new AnimacionMundo(x+0.01, y+0.02);
+//       animaciones.push_back(mundi);
+// 
+//       AnimacionMundo* mundi2 = new AnimacionMundo(x+0.01, y+0.02);
+//       animaciones.push_back(mundi2); // En el caso del mundo, la consecuencia es la misma animacion de el accesorio.
+//    }
+//    // etc...
+// }
+// 
 
 void AnimacionEscenaPajaro::play(){
    int duracionMovimientoPajaro = 5000;

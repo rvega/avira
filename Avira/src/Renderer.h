@@ -23,7 +23,7 @@ class Renderer{
       void setImg2(ofxCvGrayscaleImage val);
       void setImg3(ofxCvGrayscaleImage val);
       void setImg4(ofxCvGrayscaleImage val);
-      // void setImg5(ofxCvGrayscaleImage val);
+      void setImg5(ofxCvGrayscaleImage val);
 
       void setGente( map<int,Persona> val );
 
@@ -38,13 +38,13 @@ class Renderer{
       string title2;
       string title3;
       string title4;
-      // string title5;
+      string title5;
 
       ofxCvGrayscaleImage img1;
       ofxCvGrayscaleImage img2;
       ofxCvGrayscaleImage img3;
       ofxCvGrayscaleImage img4;
-      // ofxCvGrayscaleImage img5;
+      ofxCvGrayscaleImage img5;
 
       ofxCvColorImage imgOutput;
       map<int,Persona> gente;

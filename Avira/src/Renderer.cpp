@@ -9,14 +9,14 @@
 Renderer::Renderer():
    fullscreen(false)
 {
-   Animacion* escenaAvira = new AnimacionEscenaAvira(0.1, 0.2);
+   // Animacion* escenaAvira = new AnimacionEscenaAvira(0.1, 0.2);
    //sleep(3);
-   escenaAvira->play();
-   animaciones.push_back(escenaAvira);
+   // escenaAvira->play();
+   // animaciones.push_back(escenaAvira)
 
-   Animacion* escenaPajaro = new AnimacionEscenaPajaro(0.1, 0.0);
-   escenaPajaro -> play();
-   animaciones.push_back(escenaPajaro);
+   // Animacion* escenaPajaro = new AnimacionEscenaPajaro(0.1, 0.0)
+   // escenaPajaro -> play()
+   // animaciones.push_back(escenaPajaro);
 
    ofRegisterGetMessages(this);
 }
@@ -47,6 +47,10 @@ void Renderer::setTitle4(string val){
    title4 = val;
 }
 
+void Renderer::setTitle5(string val){
+   title5 = val;
+}
+
 void Renderer::setImgOutput(ofxCvColorImage val){
    imgOutput = val;
 }
@@ -65,6 +69,10 @@ void Renderer::setImg3(ofxCvGrayscaleImage val){
 
 void Renderer::setImg4(ofxCvGrayscaleImage val){
    img4 = val;
+}
+
+void Renderer::setImg5(ofxCvGrayscaleImage val){
+   img5 = val;
 }
 
 void Renderer::setGente( map<int,Persona> val ){
@@ -103,7 +111,7 @@ void Renderer::draw(){
       drawImage(POSICION_2_X, POSICION_2_Y, title2, img2);
       drawImage(POSICION_3_X, POSICION_3_Y, title3, img3);
       drawImage(POSICION_4_X, POSICION_4_Y, title4, img4);
-      // drawImage(POSICION_5_X, POSICION_5_Y, "Fondo:", imgOutput);
+      drawImage(POSICION_5_X, POSICION_5_Y, title5, img5);
       drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
 
       for(int i=0; i<NUM_PERSONAS; i++){

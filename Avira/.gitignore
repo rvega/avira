@@ -1,0 +1,7 @@
+Avira.layout
+bin/Avira
+bin/Avira_debug
+bin/data/referencia.*
+bin/libs/libfmodexp64.so
+bin/libs/libfmodex.so
+obj

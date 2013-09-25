@@ -25,14 +25,15 @@ void Gui::setup(){
    gui.addButton("Usar Pelicula", true);
    gui.addButton("Capturar Fondo", true);
    gui.addButton("Pantalla Completa", true);
-   gui.addLabel("Cualquier tecla para salir de pantalla completa", OFX_UI_FONT_SMALL);
    gui.addSpacer(GUI_WIDTH, 0);
    gui.addSpacer(GUI_WIDTH, 0);
    gui.autoSizeToFitWidgets();
 
    gui2.addSpacer(GUI_WIDTH, 0);
    gui2.addSlider("Threshold", 0, 100, THRESHOLD_DEFAULT);
-   gui2.addSlider("Tamanho Minimo", PERSONA_TAMANO_MINIMO, PERSONA_TAMANO_MAXIMO_SLIDER, PERSONA_TAMANO_DEFAULT);
+   gui2.addSlider("Tamanho Minimo", SLIDER_TAMANO_MIN_LEFT, SLIDER_TAMANO_MIN_RIGHT, SLIDER_TAMANO_DEFAULT);
+   gui2.addSlider("Tamanho Maximo", SLIDER_TAMANO_MAX_LEFT, SLIDER_TAMANO_MAX_RIGHT, SLIDER_TAMANO_DEFAULT);
+   gui2.addSlider("Blur", 1, 99, 1);
    gui2.autoSizeToFitWidgets();
 
    ofAddListener(gui.newGUIEvent, this, &Gui::guiEvent);
@@ -64,6 +65,18 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
    if(e.widget->getName()=="Tamanho Minimo") {
       float value = ((ofxUISlider*)(e.widget))->getScaledValue();
       ofSendMessage("TAMANO_MINIMO " + ofToString(value) );
+      return;
+   }
+
+   if(e.widget->getName()=="Blur") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("BLUR " + ofToString(value) );
+      return;
+   }
+
+   if(e.widget->getName()=="Tamanho Maximo") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("TAMANO_MAXIMO " + ofToString(value) );
       return;
    }
 

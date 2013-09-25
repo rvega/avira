@@ -6,6 +6,7 @@ void AviraApp::setup(){
    renderer.setTitle2("Grises:");
    renderer.setTitle3("Diferencia:");
    renderer.setTitle4("Thresholded:");
+   renderer.setTitle5("Blured:");
    gui.setup();
    tracker.start();
    sleep(1);
@@ -31,6 +32,7 @@ void AviraApp::update(){
       renderer.setImg2( tracker.getImgPaso1() );
       renderer.setImg3( tracker.getImgPaso2() );
       renderer.setImg4( tracker.getImgPaso3() );
+      renderer.setImg5( tracker.getImgPaso4() );
    }
 }
 

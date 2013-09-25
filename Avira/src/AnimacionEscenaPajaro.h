@@ -7,7 +7,7 @@
 class AnimacionEscenaPajaro: public Animacion{
    public:
       explicit AnimacionEscenaPajaro(float x, float y);
-      virtual ~AnimacionEscenaPajaro();
+      // virtual ~AnimacionEscenaPajaro();
       void play();
       void draw();
       void setCualAccesorio(string val);

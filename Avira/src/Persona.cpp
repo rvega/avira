@@ -17,11 +17,17 @@ void Persona::drawBorder(){
    ofPushStyle();
    ofNoFill();
    ofSetColor(color);
+
    float x,y,w,h;
-   x = POSICION_6_X + (this->x * IMAGEN_PEQUENA_WIDTH);
-   y = POSICION_6_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
+   x = POSICION_5_X + (this->x * IMAGEN_PEQUENA_WIDTH);
+   y = POSICION_5_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
    w = width * IMAGEN_PEQUENA_WIDTH;
    h = height * IMAGEN_PEQUENA_HEIGHT;
    ofRect(x,y,w,h);
+
+   x = POSICION_6_X + (this->x * IMAGEN_PEQUENA_WIDTH);
+   y = POSICION_6_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
+   ofRect(x,y,w,h);
+
    ofPopStyle();
 }

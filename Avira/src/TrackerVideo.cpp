@@ -11,14 +11,19 @@ TrackerVideo::TrackerVideo():
    fullscreen(false),
    useCamara(true),
    threshold(THRESHOLD_DEFAULT),
-   tamano(PERSONA_TAMANO_DEFAULT)
+   tamano(SLIDER_TAMANO_DEFAULT),
+   tamanoMax(SLIDER_TAMANO_DEFAULT),
+   blur(1)
+
 {
    imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso1.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso2.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgPaso3.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
+   imgPaso4.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgFondo.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgWork.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
+
 
    for(int i=0; i<NUM_PERSONAS; i++){
       Persona personaNueva;
@@ -97,9 +102,27 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       start();
    }
 
+   else if(string::npos != msg.message.find("BLUR")){
+      string val = msg.message.substr( msg.message.find(" ") );
+
+      // Must be an odd number
+      float blurTmp = ofToFloat(val);
+      if((int)blurTmp%2 == 0){
+         blurTmp = blurTmp + 1.0;
+      }
+
+      blur = blurTmp;
+      ofLogNotice() << "Blur: " << blur;
+   }
+
    else if(string::npos != msg.message.find("TAMANO_MINIMO")){
       string val = msg.message.substr( msg.message.find(" ") );
       tamano = ofToFloat(val);
+   }
+
+   else if(string::npos != msg.message.find("TAMANO_MAXIMO")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      tamanoMax = ofToFloat(val);
    }
 
    else if(string::npos != msg.message.find("THRESHOLD")){
@@ -144,6 +167,11 @@ ofxCvGrayscaleImage TrackerVideo::getImgPaso2(){
 
 ofxCvGrayscaleImage TrackerVideo::getImgPaso3(){
    ofxCvGrayscaleImage img = imgPaso3;
+   return img;
+}
+
+ofxCvGrayscaleImage TrackerVideo::getImgPaso4(){
+   ofxCvGrayscaleImage img = imgPaso4;
    return img;
 }
 
@@ -209,9 +237,9 @@ void TrackerVideo::threadedFunction(){
             // frameCounter = 0;
             // ofLogNotice() <<  "tick" << "\n";
 
-            // Convertir a escala de grises
+            // Paso1: Convertir a escala de grises
             if(lock()){
-               imgInput.setRoiFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
+               imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
                imgInput.mirror(false, true); // Flip horizontally
                imgWork = imgInput;
 
@@ -220,7 +248,7 @@ void TrackerVideo::threadedFunction(){
                unlock();
             }
 
-            // Restar la imagen gris (paso1) de el fondo.
+            // Paso2: Restar la imagen gris de el fondo.
             imgWork.absDiff(imgFondo, imgWork);
             if(!fullscreen && lock()){
                imgPaso2 = imgWork;
@@ -228,16 +256,23 @@ void TrackerVideo::threadedFunction(){
             } 
 
 
-            // Aplicar threshold a la resta (paso2)
+            // Paso3: Aplicar threshold
             imgWork.threshold(threshold);
             if(!fullscreen && lock()){
                imgPaso3 = imgWork;
                unlock();
             } 
 
+            // Paso4: Blur
+            imgWork.blurGaussian(blur);
+            if(!fullscreen && lock()){
+               imgPaso4 = imgWork;
+               unlock();
+            } 
+
             // Encontrar contornos
             // TODO: traer lo de Johnny
-            contourFinder.findContours(imgWork, tamano, PERSONA_TAMANO_MAXIMO, NUM_PERSONAS, false); // false: no busque huecos,
+            contourFinder.findContours(imgWork, tamano, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
 
             if(lock()){
                for(i=0; i<NUM_PERSONAS; i++){

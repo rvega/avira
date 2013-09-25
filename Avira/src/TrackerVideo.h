@@ -15,6 +15,7 @@ class TrackerVideo: public ofThread{
       ofxCvGrayscaleImage getImgPaso1();
       ofxCvGrayscaleImage getImgPaso2();
       ofxCvGrayscaleImage getImgPaso3();
+      ofxCvGrayscaleImage getImgPaso4();
 		void gotMessage(ofMessage& msg);
    
    private:
@@ -24,6 +25,7 @@ class TrackerVideo: public ofThread{
       ofxCvGrayscaleImage imgPaso1;
       ofxCvGrayscaleImage imgPaso2;
       ofxCvGrayscaleImage imgPaso3;
+      ofxCvGrayscaleImage imgPaso4;
       ofxCvGrayscaleImage imgFondo;
       ofxCvGrayscaleImage imgWork;
 
@@ -32,6 +34,8 @@ class TrackerVideo: public ofThread{
       std::map<int, Persona> gente;
       int threshold;
       int tamano;
+      int tamanoMax;
+      int blur;
 
       void captureFondo();
       void threadedFunction();
