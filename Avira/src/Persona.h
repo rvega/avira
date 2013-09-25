@@ -11,7 +11,8 @@ class Persona{
       bool getActiva();
       bool getQuieta();
       void setDimensions(float newX, float newY, float newW, float newH);
-
+      float getY();
+      float getX();
 
    private:
       float x;

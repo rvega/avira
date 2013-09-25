@@ -5,8 +5,9 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 AnimacionMunecoAvira::AnimacionMunecoAvira(float x, float y):
-Animacion(x-0.3,y)
+Animacion(x,y)
 { 
+   xOffset=-0.25;
    loop=false;
    width=0.4;
    setPath("animaciones/avira/muneco");

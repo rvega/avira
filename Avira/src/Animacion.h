@@ -6,10 +6,6 @@ class Animacion{
    public:
       explicit Animacion(float x, float y);
       virtual ~Animacion();
-      float x;
-      float y;
-      float height;
-      float width;
       int fps;
       bool loop;
       virtual void draw();
@@ -18,6 +14,10 @@ class Animacion{
       void setPath(string val);
       void gotMessage(ofMessage& msg);
       bool playing;
+      float getX();
+      float getY();
+      void setX(float val);
+      void setY(float val);
 
    private:
       bool fullscreen;
@@ -28,6 +28,12 @@ class Animacion{
       unsigned int frameIndex;
 
    protected:
+      float x;
+      float y;
+      float height;
+      float width;
+      float xOffset;
+      float yOffset;
       float startTime;
       std::vector<Animacion*> animaciones;
 };

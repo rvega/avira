@@ -5,7 +5,7 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 Animacion::Animacion(float x, float y):
-x(x), y(y), width(0.1), fps(12), loop(true), playing(false), fullscreen(false), frameIndex(0)
+x(x), y(y), xOffset(0.0), yOffset(0.0), width(0.1), fps(12), loop(true), playing(false), fullscreen(false), frameIndex(0)
 {
    ofRegisterGetMessages(this);
 }
@@ -38,6 +38,28 @@ void Animacion::setPath(string val){
    }
 }
 
+float Animacion::getX(){
+   return x;
+}
+
+float Animacion::getY(){
+   return y;
+}
+
+void Animacion::setX(float val){
+   x = val;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setX(val);
+   }
+}
+
+void Animacion::setY(float val){
+   y = val;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setY(val);
+   }
+}
+
 //===========================================//
 //  MENSAJES QUE LLEGAN DESDE OTROS OBJETOS  //
 //===========================================//
@@ -58,6 +80,9 @@ void Animacion::play(){
 
 void Animacion::stop(){
    playing = false;
+   for(unsigned int i = 0; i < animaciones.size(); i++) {
+      animaciones.at(i)->stop();
+   }
 }
 
 
@@ -77,14 +102,14 @@ void Animacion::drawImagen(){
 
    int imgX, imgY, imgH, imgW;
    if(fullscreen){
-      imgX = x * VENTANA_WIDTH;
-      imgY = y * VENTANA_HEIGHT;
+      imgX = (x+xOffset) * VENTANA_WIDTH;
+      imgY = (y+yOffset) * VENTANA_HEIGHT;
       imgW = width * VENTANA_WIDTH;
       imgH = height * VENTANA_WIDTH; // Yes, width is ok, (height is initially calculated based on width)
    }
    else{
-      imgX = POSICION_6_X + (x * IMAGEN_PEQUENA_WIDTH);
-      imgY = POSICION_6_Y + (y * IMAGEN_PEQUENA_HEIGHT);
+      imgX = POSICION_6_X + ((x+xOffset) * IMAGEN_PEQUENA_WIDTH);
+      imgY = POSICION_6_Y + ((y+yOffset) * IMAGEN_PEQUENA_HEIGHT);
       imgW = width * IMAGEN_PEQUENA_WIDTH;
       imgH = height * IMAGEN_PEQUENA_WIDTH;
    }

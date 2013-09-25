@@ -69,21 +69,21 @@ void AnimacionEscenaPajaro::draw(){
    // Aqiui falta poner condicionales, tiempos, loquesea para mostrar la consecuencia.
 
 
-    bool teAtrape = false;
+   bool teAtrape = false;
    float mapaX = tween.update();
-   animaciones.at(0)->x=mapaX;
+   animaciones.at(0)->setX(mapaX);
 
    // si el pajaro.x es mayor o igual a el blob.x
    //TODO: medir distancia entre los dos puntos
-   if(!animaciones.at(1)->playing && animaciones.at(0)->x >= 0.3 && !animaciones.at(2)->playing ){
+   if(!animaciones.at(1)->playing && animaciones.at(0)->getX() >= 0.3 && !animaciones.at(2)->playing ){
 
-      animaciones.at(1)->x = animaciones.at(0)->x;
-      animaciones.at(1)->y = animaciones.at(0)->y + 0.1;
+      animaciones.at(1)->setX( animaciones.at(0)->getX() );
+      animaciones.at(1)->setY( animaciones.at(0)->getY()+0.1 );
 
       animaciones.at(1)->play();
 
-      multitween.setParameters(easingLinear,ofxTween::easeInOut,animaciones.at(1)->x,animaciones.at(1)->x + 0.3,1000,50);
-      multitween.addValue(animaciones.at(1)->y,animaciones.at(1)->y + 0.5);
+      multitween.setParameters(easingLinear,ofxTween::easeInOut,animaciones.at(1)->getX(),animaciones.at(1)->getX() + 0.3, 1000, 50);
+      multitween.addValue(animaciones.at(1)->getY(),animaciones.at(1)->getY() + 0.5);
       multitween.start();
 
       //animaciones.at(2)->play();
@@ -93,26 +93,26 @@ void AnimacionEscenaPajaro::draw(){
       float tweenx = multitween.update();
       float tweeny = multitween.getTarget(1);
       //Tween accesorio
-      animaciones.at(1) ->x=tweenx;
-      animaciones.at(1)->y=tweeny;
+      animaciones.at(1)->setX(tweenx);
+      animaciones.at(1)->setY(tweeny);
       animaciones.at(2)->stop();
 
 
    }
-    //compara la posicion de la animacion con la del blob
-      if((animaciones.at(1)->y >= y + 0.5) && (animaciones.at(1)->x >= x + 0.3)) {
+   //compara la posicion de la animacion con la del blob
+   if((animaciones.at(1)->getY() >= y + 0.5) && (animaciones.at(1)->getX() >= x + 0.3)) {
 
-            teAtrape = true;
+      teAtrape = true;
 
-      }
-    if(teAtrape){
-        cout << "adentro"<<endl;
-     animaciones.at(2)->x = animaciones.at(1)->x;
-     animaciones.at(2)->y = animaciones.at(1)->y;
-     animaciones.at(1)->stop();
-     animaciones.at(2)->play();
+   }
+   if(teAtrape){
+      cout << "adentro"<<endl;
+      animaciones.at(2)->setX(animaciones.at(1)->getX());
+      animaciones.at(2)->setY(animaciones.at(1)->getY());
+      animaciones.at(1)->stop();
+      animaciones.at(2)->play();
 
-     }
+   }
 
 
 

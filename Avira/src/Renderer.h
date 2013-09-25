@@ -31,6 +31,7 @@ class Renderer{
 
    private:
       bool fullscreen;
+      bool playing;
 
       std::vector<Animacion*> animaciones;
 
