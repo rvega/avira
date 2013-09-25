@@ -13,8 +13,9 @@ class AnimacionEscenaPajaro: public Animacion{
       void setCualAccesorio(string val);
 
    private:
-      string cualAccesorio;
+      string elAccesorio;
       ofxTween tween;
       ofxEasingLinear easingLinear;
       ofxTween multitween;
+
 };
