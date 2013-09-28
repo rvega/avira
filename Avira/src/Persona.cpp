@@ -56,7 +56,7 @@ float Persona::getX(){
 void Persona::setDimensions(float newX, float newY, float newW, float newH){
    // Solo personas en la mitad de abajo del cuadro y
    // quietas mas de 1 seg
-   if(newY > 0.4){
+   if(newY > 0.5){
       float dist = pow(x-newX,2) + pow(y-newY,2);
       if(dist <= 0.0002){
          float time = ofGetElapsedTimef();

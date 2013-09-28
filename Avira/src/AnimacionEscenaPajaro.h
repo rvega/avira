@@ -17,5 +17,6 @@ class AnimacionEscenaPajaro: public Animacion{
       ofxTween tween;
       ofxEasingLinear easingLinear;
       ofxTween multitween;
+      float timer;
 
 };

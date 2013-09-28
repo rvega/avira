@@ -5,8 +5,9 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 AnimacionPajaro::AnimacionPajaro(float x, float y):
-Animacion(x-0.3,y)
+Animacion(x,y)
 {
+    yOffset = 1;
    loop=true;
    width=0.4;
    setPath("animaciones/pajaro/pajaro");

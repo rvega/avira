@@ -1,4 +1,4 @@
-#include "Renderer.h" 
+#include "Renderer.h"
 #include "constantes.h"
 #include "AnimacionEscenaPajaro.h"
 #include "AnimacionEscenaAvira.h"
@@ -13,8 +13,8 @@ Renderer::Renderer():
    Animacion* escenaAvira = new AnimacionEscenaAvira(0,0);
    animaciones.push_back(escenaAvira);
 
-   // Animacion* escenaPajaro = new AnimacionEscenaPajaro(0.1, 0.0)
-   // animaciones.push_back(escenaPajaro);
+    Animacion* escenaPajaro = new AnimacionEscenaPajaro(-0.2, 0.8);
+   animaciones.push_back(escenaPajaro);
 
    ofRegisterGetMessages(this);
 }
@@ -50,7 +50,8 @@ void Renderer::setTitle5(string val){
 }
 
 void Renderer::setImgOutput(ofxCvColorImage val){
-   if(!playing) imgOutput = val;
+   //if(!playing) imgOutput = val;
+   imgOutput = val;
 }
 
 void Renderer::setImg1(ofxCvGrayscaleImage val){
@@ -113,7 +114,7 @@ void Renderer::draw(){
       drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
 
       for(int i=0; i<NUM_PERSONAS; i++){
-         if(gente.at(i).getActiva() && gente.at(i).getQuieta()){
+         if(gente.at(i).getActiva()){
             gente.at(i).drawBorder();
          }
       }
@@ -123,20 +124,34 @@ void Renderer::draw(){
    }
 
    for(int i=0; i<NUM_PERSONAS; i++){
-      if(gente.at(i).getActiva() && gente.at(i).getQuieta() && !playing){
+      if(gente.at(i).getActiva()  && !playing){
          float x = gente.at(0).getX();
          float y = gente.at(0).getY();
          animaciones.at(0)->setX(x);
          animaciones.at(0)->setY(y);
          animaciones.at(0)->play();
+//         animaciones.at(1)->setX(x);
+//         animaciones.at(1)->setY(y);
+         animaciones.at(1) -> play();
       }
+
+        // dibuja personaje principal
+
+
+//        if(gente.at(i).getActiva()  && !playing){
+//         float x = gente.at(1).getX();
+//         float y = gente.at(1).getY();
+//         animaciones.at(1)->setX(x);
+//         animaciones.at(1)->setY(y);
+//         animaciones.at(1)->play();
+//      }
    }
 
    playing = false;
    for(unsigned int i=0; i<animaciones.size(); i++){
       animaciones.at(i)->draw();
       if(animaciones.at(i)->playing){
-         playing = true; 
+         playing = true;
       }
    }
 }

@@ -243,7 +243,7 @@ void TrackerVideo::threadedFunction(){
 
          if(lock()){
             imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
-            imgInput.mirror(false, true); // Flip horizontally
+            //imgInput.mirror(false, true); // Flip horizontally
 
             // Hacer la deteccion de video pocas veces por segundo.
             if(frameCounterNow != frameCounter){
@@ -263,28 +263,28 @@ void TrackerVideo::threadedFunction(){
          if(!fullscreen && lock()){
             imgPaso1 = imgWork;
             unlock();
-         } 
+         }
 
          // Paso2 Aplicar threshold
          imgWork.threshold(threshold);
          if(!fullscreen && lock()){
             imgPaso2 = imgWork;
             unlock();
-         } 
+         }
 
          // Paso3: Blur
          imgWork.blurGaussian(blur);
          if(!fullscreen && lock()){
             imgPaso3 = imgWork;
             unlock();
-         } 
+         }
 
          // Paso4 Threshold otra vez
          imgWork.threshold(threshold2);
          if(!fullscreen && lock()){
             imgPaso4 = imgWork;
             unlock();
-         } 
+         }
 
          // Encontrar contornos
          contourFinder.findContours(imgWork, tamano, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
