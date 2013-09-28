@@ -12,19 +12,16 @@ TrackerVideo::TrackerVideo():
    useCamara(true),
    threshold(THRESHOLD_DEFAULT),
    threshold2(THRESHOLD_DEFAULT),
-   tamano(SLIDER_TAMANO_DEFAULT),
+   tamanoMin(SLIDER_TAMANO_DEFAULT),
    tamanoMax(SLIDER_TAMANO_DEFAULT),
    blur(1),
-   frameCounter(5)
+   frameCounter(5),
+   frameEsNuevo(false),
+   frameCounterNow(0)
 {
-   imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
-   imgPaso1.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
-   imgPaso2.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
-   imgPaso3.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
-   imgPaso4.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgFondo.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
+   imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgWork.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
-
 
    for(int i=0; i<NUM_PERSONAS; i++){
       Persona personaNueva;
@@ -39,9 +36,6 @@ TrackerVideo::~TrackerVideo(){
    ofUnregisterGetMessages(this);
 
    imgInput.clear();
-   imgPaso1.clear();
-   imgPaso2.clear();
-   imgPaso3.clear();
    imgFondo.clear();
    imgWork.clear();
 }
@@ -61,16 +55,9 @@ void TrackerVideo::start(){
    }
 
    // Cargar imagen de fondo
-   try{
-      ofImage img;
-      img.loadImage("fondo.png");
-      imgFondo.setFromPixels( img.getPixelsRef() );
-   }
-   catch(int e){
-      // Nada, siga fresco.
-   }
-
-   startThread(false, false); // non blocking, not verbose;
+   ofImage img;
+   img.loadImage("fondo.png");
+   imgFondo.setFromPixels( img.getPixelsRef() );
 }
 
 void TrackerVideo::stop(){
@@ -80,7 +67,6 @@ void TrackerVideo::stop(){
    else{
       pelicula.stop();
    }
-   stopThread();
 }
 
 //===========================================//
@@ -113,12 +99,11 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       }
 
       blur = blurTmp;
-      ofLogNotice() << "Blur: " << blur;
    }
 
    else if(string::npos != msg.message.find("TAMANO_MINIMO")){
       string val = msg.message.substr( msg.message.find(" ") );
-      tamano = ofToFloat(val);
+      tamanoMin = ofToFloat(val);
    }
 
    else if(string::npos != msg.message.find("TAMANO_MAXIMO")){
@@ -139,6 +124,7 @@ void TrackerVideo::gotMessage(ofMessage& msg){
    else if(string::npos != msg.message.find("FRAME_COUNTER")){
       string val = msg.message.substr( msg.message.find(" ") );
       frameCounter = ofToInt(val);
+      frameCounterNow=0;
    }
 
    else if(msg.message == "FULLSCREEN_ON"){
@@ -160,49 +146,24 @@ void TrackerVideo::gotMessage(ofMessage& msg){
 }
 
 void TrackerVideo::captureFondo(){
+   imgFondo = imgInput;
    ofImage img;
-   while (!lock()){
-      sleep(1);
-   }
-   imgFondo = getImgInput();
    img.setFromPixels( imgFondo.getPixelsRef() );
-   unlock();
    img.saveImage("fondo.png");
 }
 
 //=============//
 //  ACCESSORS  //
 //=============//
-
-// OJO! toca hacer lock() antes de llamar los siguientes metodos
-ofxCvGrayscaleImage TrackerVideo::getImgPaso1(){
-   ofxCvGrayscaleImage img = imgPaso1;
-   return img;
+ofxCvImage* TrackerVideo::getInputImage(){
+   return &imgInput;
 }
 
-ofxCvGrayscaleImage TrackerVideo::getImgPaso2(){
-   ofxCvGrayscaleImage img = imgPaso2;
-   return img;
-}
-
-ofxCvGrayscaleImage TrackerVideo::getImgPaso3(){
-   ofxCvGrayscaleImage img = imgPaso3;
-   return img;
-}
-
-ofxCvGrayscaleImage TrackerVideo::getImgPaso4(){
-   ofxCvGrayscaleImage img = imgPaso4;
-   return img;
-}
-
-ofxCvGrayscaleImage TrackerVideo::getImgFondo(){
-   ofxCvGrayscaleImage img = imgFondo;
-   return img;
-}
-
-ofxCvColorImage TrackerVideo::getImgInput(){
-   ofxCvColorImage img = imgInput;
-   return img;
+vector<ofxCvImage*> TrackerVideo::getInterimImages(){
+   vector<ofxCvImage*> images;
+   images.push_back(&imgFondo);
+   images.push_back(&imgWork);
+   return images;
 }
 
 std::map<int, Persona> TrackerVideo::getGente(){
@@ -212,102 +173,73 @@ std::map<int, Persona> TrackerVideo::getGente(){
 //==========//
 //  WORKER  //
 //==========//
-void TrackerVideo::threadedFunction(){
-   bool frameEsNuevo = false;
-   unsigned char* pixels;
-   ofxCvContourFinder contourFinder;
-   ofRectangle rectangle;
-   int frameCounterNow = 0;
-   int i;
+void TrackerVideo::track(){
 
-   while(isThreadRunning()){
 
-      // Tenemos un frame nuevo?
+   // Tenemos un frame nuevo?
+   if(useCamara){
+      camara.update();
+      frameEsNuevo = camara.isFrameNew();
+   }
+   else{
+      pelicula.update();
+      frameEsNuevo = pelicula.isFrameNew();
+   }
+
+   if(frameEsNuevo){
+      // Agarre pixeles de la imagen de entrada
       if(useCamara){
-         camara.update();
-         frameEsNuevo = camara.isFrameNew();
+         pixels = camara.getPixels();
       }
       else{
-         pelicula.update();
-         frameEsNuevo = pelicula.isFrameNew();
+         pixels = pelicula.getPixels();
       }
 
-      if(frameEsNuevo){
-         // Agarre pixeles de la imagen de entrada
-         if(useCamara){
-            pixels = camara.getPixels();
+      imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
+      imgInput.mirror(false, true); // Flip horizontally
+
+      // Hacer la deteccion de video pocas veces por segundo.
+      if(frameCounterNow != frameCounter && frameCounter!=0){
+         frameCounterNow ++;
+         return;
+      }
+      frameCounterNow = 0;
+
+      // Paso0: Convertir a escala de grises
+      imgWork = imgInput;
+
+      // Paso1: Restar la imagen gris de el fondo.
+      imgWork.absDiff(imgFondo, imgWork);
+
+      // Paso2 Aplicar threshold
+      imgWork.setROI(0, CAMARA_HEIGHT/2, CAMARA_WIDTH, (CAMARA_HEIGHT/2)-1);
+      imgWork.threshold(threshold);
+
+      // Paso3: Blur
+      imgWork.blurGaussian(blur);
+
+      // Paso4 Threshold otra vez
+      imgWork.threshold(threshold2);
+
+      contourFinder.findContours(imgWork, tamanoMin, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
+
+      // Encontrar contornos
+      for(i=0; i<NUM_PERSONAS; i++){
+         if(i < contourFinder.nBlobs){
+            rectangle = contourFinder.blobs.at(i).boundingRect;
+            gente.at(i).setActiva(true);
+            gente.at(i).setDimensions(
+               (float)rectangle.x/(float)CAMARA_WIDTH,
+               ((float)rectangle.y + CAMARA_HEIGHT/2) / (float)CAMARA_HEIGHT,
+               (float)rectangle.width/(float)CAMARA_WIDTH,
+               (float)rectangle.height/(float)CAMARA_HEIGHT
+            );
          }
          else{
-            pixels = pelicula.getPixels();
-         }
-
-         if(lock()){
-            imgInput.setFromPixels(pixels, CAMARA_WIDTH, CAMARA_HEIGHT);
-            imgInput.mirror(false, true); // Flip horizontally
-
-            // Hacer la deteccion de video pocas veces por segundo.
-            if(frameCounterNow != frameCounter){
-               frameCounterNow ++;
-               unlock();
-               continue;
-            }
-            frameCounterNow = 0;
-
-            // Paso0: Convertir a escala de grises
-            imgWork = imgInput;
-            unlock();
-         }
-
-         // Paso1: Restar la imagen gris de el fondo.
-         imgWork.absDiff(imgFondo, imgWork);
-         if(!fullscreen && lock()){
-            imgPaso1 = imgWork;
-            unlock();
-         } 
-
-         // Paso2 Aplicar threshold
-         imgWork.threshold(threshold);
-         if(!fullscreen && lock()){
-            imgPaso2 = imgWork;
-            unlock();
-         } 
-
-         // Paso3: Blur
-         imgWork.blurGaussian(blur);
-         if(!fullscreen && lock()){
-            imgPaso3 = imgWork;
-            unlock();
-         } 
-
-         // Paso4 Threshold otra vez
-         imgWork.threshold(threshold2);
-         if(!fullscreen && lock()){
-            imgPaso4 = imgWork;
-            unlock();
-         } 
-
-         // Encontrar contornos
-         contourFinder.findContours(imgWork, tamano, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
-
-         if(lock()){
-            for(i=0; i<NUM_PERSONAS; i++){
-               if(i < contourFinder.nBlobs){
-                  rectangle = contourFinder.blobs.at(i).boundingRect;
-                  gente.at(i).setActiva(true);
-                  gente.at(i).setDimensions(
-                     (float)rectangle.x/(float)CAMARA_WIDTH,
-                     (float)rectangle.y / (float)CAMARA_HEIGHT,
-                     (float)rectangle.width/(float)CAMARA_WIDTH,
-                     (float)rectangle.height/(float)CAMARA_HEIGHT
-                  );
-               }
-               else{
-                  gente.at(i).setActiva(false);
-               }
-            }
-            unlock();
+            gente.at(i).setActiva(false);
          }
       }
-      sleep(1);
+
+      imgWork.resetROI();
    }
 }

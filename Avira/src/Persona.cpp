@@ -3,10 +3,31 @@
 #include "ofMain.h"
 
 Persona::Persona():
-x(0), y(0), height(0), width(0), activa(false), quieta(false)
+x(0), y(0), height(0), width(0), activa(false), quieta(false), startTime(0)
 { }
 
 Persona::~Persona(){}
+
+// Persona::Persona(const Persona& other):
+// x(other.x), y(other.y), height(other.height), width(other.width), activa(other.activa), quieta(other.quieta), color(other.color), startTime(other.startTime)
+// {
+//    ofLogNotice() << "Pesona copy constructor";
+// }
+// 
+// Persona& Persona::operator=(const Persona& other){
+//    ofLogNotice() << "Pesona assignment operatorr";
+// 
+//    x = other.x;
+//    y = other.y;
+//    height = other.height;
+//    width = other.width;
+//    activa = other.activa;
+//    quieta = other.quieta;
+//    color = other.color;
+//    startTime = other.startTime;
+// 
+//    return *this;
+// }
 
 void Persona::setBorderColor(float r, float g, float b){
    color.r = r;
@@ -20,14 +41,14 @@ void Persona::drawBorder(){
    ofSetColor(color);
 
    float x,y,w,h;
-   x = POSICION_5_X + (this->x * IMAGEN_PEQUENA_WIDTH);
-   y = POSICION_5_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
+   x = POSICION_2_X + (this->x * IMAGEN_PEQUENA_WIDTH);
+   y = POSICION_2_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
    w = width * IMAGEN_PEQUENA_WIDTH;
    h = height * IMAGEN_PEQUENA_HEIGHT;
    ofRect(x,y,w,h);
 
-   x = POSICION_6_X + (this->x * IMAGEN_PEQUENA_WIDTH);
-   y = POSICION_6_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
+   x = POSICION_3_X + (this->x * IMAGEN_PEQUENA_WIDTH);
+   y = POSICION_3_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
    ofRect(x,y,w,h);
 
    ofPopStyle();

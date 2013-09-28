@@ -30,7 +30,7 @@ void Gui::setup(){
    gui2.addSlider("Tamanho Maximo", SLIDER_TAMANO_MAX_LEFT, SLIDER_TAMANO_MAX_RIGHT, SLIDER_TAMANO_DEFAULT);
    gui2.autoSizeToFitWidgets();
 
-   gui3.addSlider("Frame Counter", 1.0, 30.0, 5.0);
+   gui3.addSlider("Frame Counter", 0.0, 30.0, 5.0);
    gui3.addButton("Play/Pausa", true);
    gui3.addSlider("Posicion Pelicula", 0.0, 1.0, 0.0);
    gui3.autoSizeToFitWidgets();

@@ -5,6 +5,9 @@ class Persona{
    public:
       explicit Persona();
       virtual ~Persona();
+      // Persona(const Persona&);
+      // Persona& operator=(const Persona&);
+
       void setBorderColor(float r, float g, float b);
       void drawBorder();
       void setActiva(bool val);
