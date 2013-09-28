@@ -108,8 +108,8 @@ void Animacion::drawImagen(){
       imgH = height * VENTANA_WIDTH; // Yes, width is ok, (height is initially calculated based on width)
    }
    else{
-      imgX = POSICION_6_X + ((x+xOffset) * IMAGEN_PEQUENA_WIDTH);
-      imgY = POSICION_6_Y + ((y+yOffset) * IMAGEN_PEQUENA_HEIGHT);
+      imgX = POSICION_3_X + ((x+xOffset) * IMAGEN_PEQUENA_WIDTH);
+      imgY = POSICION_3_Y + ((y+yOffset) * IMAGEN_PEQUENA_HEIGHT);
       imgW = width * IMAGEN_PEQUENA_WIDTH;
       imgH = height * IMAGEN_PEQUENA_WIDTH;
    }

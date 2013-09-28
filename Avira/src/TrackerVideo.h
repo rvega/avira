@@ -31,6 +31,7 @@ class TrackerVideo{
       int tamanoMax;
       int blur;
       int frameCounter;
+      int roi;
 
       bool frameEsNuevo;
       unsigned char* pixels;

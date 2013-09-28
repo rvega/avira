@@ -23,6 +23,7 @@ void Gui::setup(){
    gui.addButton("Pantalla Completa", true);
    gui.autoSizeToFitWidgets();
 
+   gui2.addSlider("Roi", 0, CAMARA_HEIGHT-2, CAMARA_HEIGHT/2);
    gui2.addSlider("Threshold", THRESHOLD1_MIN, THRESHOLD1_MAX, THRESHOLD_DEFAULT);
    gui2.addSlider("Blur", BLUR_MIN, BLUR_MAX, BLUR_DEFAULT);
    gui2.addSlider("Threshold2", THRESHOLD2_MIN, THRESHOLD2_MAX, THRESHOLD_DEFAULT);
@@ -58,6 +59,12 @@ void Gui::exit(){
 }
 
 void Gui::guiEvent(ofxUIEventArgs &e) {
+   if(e.widget->getName()=="Roi") {
+      float value = ((ofxUISlider*)(e.widget))->getScaledValue();
+      ofSendMessage("ROI " + ofToString(value) );
+      return;
+   }
+
    if(e.widget->getName()=="Threshold") {
       float value = ((ofxUISlider*)(e.widget))->getScaledValue();
       ofSendMessage("THRESHOLD1 " + ofToString(value) );

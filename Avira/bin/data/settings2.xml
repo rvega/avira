@@ -1,5 +1,10 @@
 <Widget>
     <Kind>4</Kind>
+    <Name>Roi</Name>
+    <Value>221.589401245</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
     <Name>Threshold</Name>
     <Value>65.894035339</Value>
 </Widget>

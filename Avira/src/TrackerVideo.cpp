@@ -101,6 +101,11 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       blur = blurTmp;
    }
 
+   else if(string::npos != msg.message.find("ROI")){
+      string val = msg.message.substr( msg.message.find(" ") );
+      roi = ofToFloat(val);
+   }
+
    else if(string::npos != msg.message.find("TAMANO_MINIMO")){
       string val = msg.message.substr( msg.message.find(" ") );
       tamanoMin = ofToFloat(val);
@@ -212,7 +217,7 @@ void TrackerVideo::track(){
       imgWork.absDiff(imgFondo, imgWork);
 
       // Paso2 Aplicar threshold
-      imgWork.setROI(0, CAMARA_HEIGHT/2, CAMARA_WIDTH, (CAMARA_HEIGHT/2)-1);
+      imgWork.setROI(0, roi, CAMARA_WIDTH, CAMARA_HEIGHT - roi - 1);
       imgWork.threshold(threshold);
 
       // Paso3: Blur
@@ -230,7 +235,7 @@ void TrackerVideo::track(){
             gente.at(i).setActiva(true);
             gente.at(i).setDimensions(
                (float)rectangle.x/(float)CAMARA_WIDTH,
-               ((float)rectangle.y + CAMARA_HEIGHT/2) / (float)CAMARA_HEIGHT,
+               ((float)rectangle.y + roi) / (float)CAMARA_HEIGHT,
                (float)rectangle.width/(float)CAMARA_WIDTH,
                (float)rectangle.height/(float)CAMARA_HEIGHT
             );
