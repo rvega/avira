@@ -40,9 +40,9 @@ class TrackerVideo{
       int frameCounterNow;
       int i;
 
-
       void captureFondo();
       // void threadedFunction();
+      void asignarPersonas(vector<ofxCvBlob> blobs);
 
       TrackerVideo(const TrackerVideo&);
       TrackerVideo& operator=(const TrackerVideo&);

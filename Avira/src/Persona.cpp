@@ -3,7 +3,7 @@
 #include "ofMain.h"
 
 Persona::Persona():
-x(0), y(0), height(0), width(0), activa(false), quieta(false), startTime(0)
+checked(false), x(0), y(0), height(0), width(0), activa(false), quieta(false), startTime(0)
 { }
 
 Persona::~Persona(){}
@@ -45,6 +45,7 @@ void Persona::drawBorder(){
    y = POSICION_2_Y + (this->y * IMAGEN_PEQUENA_HEIGHT);
    w = width * IMAGEN_PEQUENA_WIDTH;
    h = height * IMAGEN_PEQUENA_HEIGHT;
+   ofDrawBitmapString(ofToString(label), x+3, y-3);
    ofRect(x,y,w,h);
 
    x = POSICION_3_X + (this->x * IMAGEN_PEQUENA_WIDTH);

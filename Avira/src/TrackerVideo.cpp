@@ -226,25 +226,90 @@ void TrackerVideo::track(){
       // Paso4 Threshold otra vez
       imgWork.threshold(threshold2);
 
+      // Encontrar contornos
       contourFinder.findContours(imgWork, tamanoMin, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
 
-      // Encontrar contornos
-      for(i=0; i<NUM_PERSONAS; i++){
-         if(i < contourFinder.nBlobs){
-            rectangle = contourFinder.blobs.at(i).boundingRect;
-            gente.at(i).setActiva(true);
-            gente.at(i).setDimensions(
-               (float)rectangle.x/(float)CAMARA_WIDTH,
-               ((float)rectangle.y + roi) / (float)CAMARA_HEIGHT,
-               (float)rectangle.width/(float)CAMARA_WIDTH,
-               (float)rectangle.height/(float)CAMARA_HEIGHT
-            );
+      asignarPersonas(contourFinder.blobs);
+      // for(i=0; i<NUM_PERSONAS; i++){
+      //    if(i < contourFinder.nBlobs){
+      //       rectangle = contourFinder.blobs.at(i).boundingRect;
+      //       gente.at(i).setActiva(true);
+      //       gente.at(i).setDimensions(
+      //          (float)rectangle.x/(float)CAMARA_WIDTH,
+      //          ((float)rectangle.y + roi) / (float)CAMARA_HEIGHT,
+      //          (float)rectangle.width/(float)CAMARA_WIDTH,
+      //          (float)rectangle.height/(float)CAMARA_HEIGHT
+      //       );
+      //    }
+      //    else{
+      //       gente.at(i).setActiva(false);
+      //    }
+      // }
+
+      imgWork.resetROI();
+   }
+}
+
+
+// Aqui la vuelta es medir distancias entre los blobs nuevos y las
+// personas, asumimos que si un blob y una persona estan cerca,
+// son la misma persona/blob (el contour finder puede flickear)
+void TrackerVideo::asignarPersonas(vector<ofxCvBlob> blobs){
+   float distancia, distanciaMin, x1, x2, y1, y2;
+   unsigned int i,j,cualPersona;
+   ofRectangle rectangle;
+   bool alreadyChecked;
+
+   // marcar a todo el mundo como no-lo-he-chequeado
+   for(i=0; i<NUM_PERSONAS; i++){
+      gente.at(i).checked = false;
+   }
+
+
+   for(i=0; i<blobs.size(); i++) {
+      distanciaMin = 1.0;
+      for(j=0; j<NUM_PERSONAS; j++) {
+         // si a esta persona ya la chequie, continue con la siguiente
+         if(gente.at(j).checked){
+            //alreadyChecked = true;
+            continue;
          }
-         else{
-            gente.at(i).setActiva(false);
+         //else{
+         //   alreadyChecked = false;
+         //}
+
+         // mida distancia cuadrada entre blob(j) y persona(i)
+         x1 = gente.at(j).getX();
+         y1 = gente.at(j).getY();
+         x2 = (float)blobs.at(i).boundingRect.position.x / (float)CAMARA_WIDTH;
+         y2 = ( (float)blobs.at(i).boundingRect.position.y + roi) / (float)CAMARA_HEIGHT;
+         distancia = pow((x1-x2),2) + pow((y1-y2),2);
+
+         // es esta la distancia mas pequenha hasta ahora?
+         if(distancia < distanciaMin){
+            distanciaMin = distancia;
+            cualPersona = j;
          }
       }
 
-      imgWork.resetROI();
+      //if(!alreadyChecked){
+         rectangle = blobs.at(i).boundingRect;
+         gente.at(cualPersona).checked = true;
+         gente.at(cualPersona).setDimensions(
+               (float)rectangle.position.x/(float)CAMARA_WIDTH,
+               ((float)rectangle.position.y + roi) / (float)CAMARA_HEIGHT,
+               (float)rectangle.width/(float)CAMARA_WIDTH,
+               (float)rectangle.height/(float)CAMARA_HEIGHT
+         );
+         gente.at(cualPersona).label = cualPersona;
+      //}
+   }
+
+   for(i=0; i<NUM_PERSONAS; i++){
+      // if(! gente.at(i).checked ){
+      //    gente.at(i).setdimensions(-100,-100,0,0);
+
+      // }
+      gente.at(i).setActiva( gente.at(i).checked );
    }
 }

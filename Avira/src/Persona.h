@@ -16,6 +16,8 @@ class Persona{
       void setDimensions(float newX, float newY, float newW, float newH);
       float getY();
       float getX();
+      bool checked;
+      int label;
 
    private:
       float x;

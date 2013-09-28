@@ -69,9 +69,9 @@ void Renderer::drawOutputImage(ofxCvImage* outputImage){
 void Renderer::drawAnimaciones(map<int,Persona> gente){
    if(!fullscreen){
       for(int i=0; i<gente.size(); i++){
-         // if(gente.at(i).getActiva()){
+         if(gente.at(i).getActiva()){
             gente.at(i).drawBorder();
-         // }
+         }
       }
    }
 }

@@ -5,7 +5,7 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 Animacion::Animacion(float x, float y):
-x(x), y(y), xOffset(0.0), yOffset(0.0), width(0.1), fps(12), loop(true), playing(false), fullscreen(false), frameIndex(0)
+fps(12), loop(true), playing(false), x(x), y(y), height(0), width(0.1), xOffset(0.0), yOffset(0.0), fullscreen(false), frameIndex(0)
 {
    ofRegisterGetMessages(this);
 }
