@@ -1,4 +1,4 @@
-#include "Renderer.h" 
+#include "Renderer.h"
 #include "constantes.h"
 #include "AnimacionEscenaPajaro.h"
 #include "AnimacionEscenaAvira.h"
@@ -10,8 +10,8 @@ Renderer::Renderer():
    fullscreen(false),
    playing(false)
 {
-   // Animacion* escenaAvira = new AnimacionEscenaAvira(0,0);
-   // animaciones.push_back(escenaAvira);
+   Animacion* escenaAvira = new AnimacionEscenaAvira(0,0);
+   animaciones.push_back(escenaAvira);
 
    // Animacion* escenaPajaro = new AnimacionEscenaPajaro(0.1, 0.0)
    // animaciones.push_back(escenaPajaro);
@@ -67,30 +67,45 @@ void Renderer::drawOutputImage(ofxCvImage* outputImage){
 }
 
 void Renderer::drawAnimaciones(map<int,Persona> gente){
+   // Dibuje borde de blobs
    if(!fullscreen){
-      for(int i=0; i<gente.size(); i++){
+      for(unsigned int i=0; i<gente.size(); i++){
          if(gente.at(i).getActiva()){
             gente.at(i).drawBorder();
          }
       }
    }
+
+   triggerAnimacion(gente);
+
+   // dibuje animaciones
+   playing = false;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+       // TODO agarrar la pos de la persona que es.
+
+       animaciones.at(i)->setXPersona(gente.at(0).getX());
+       animaciones.at(i)->setYPersona(gente.at(0).getY());
+       animaciones.at(i)->draw();
+       if(animaciones.at(i)->playing){
+          playing = true;
+       }
+    }
 }
 
-   // for(int i=0; i<NUM_PERSONAS; i++){
-   //    if(gente.at(i).getActiva() && gente.at(i).getQuieta() && !playing){
-   //       float x = gente.at(0).getX();
-   //       float y = gente.at(0).getY();
-   //       animaciones.at(0)->setX(x);
-   //       animaciones.at(0)->setY(y);
-   //       animaciones.at(0)->play();
-   //    }
-   // }
+void Renderer::triggerAnimacion(map<int,Persona> gente){
+    // Escoja cual animacion disparar TODO
+    for(int i=0; i<NUM_PERSONAS; i++){
+       if(gente.at(i).getActiva() && gente.at(i).getQuieta() && !playing){
+          // Por ahora, dispare escena avira
+          float x = gente.at(0).getX();
+          float y = gente.at(0).getY();
+          animaciones.at(0)->setX(x);
+          animaciones.at(0)->setY(y);
+          animaciones.at(0)->setXPersona(x);
+          animaciones.at(0)->setYPersona(y);
+          animaciones.at(0)->play();
+       }
+    }
+}
 
-   // playing = false;
-   // for(unsigned int i=0; i<animaciones.size(); i++){
-   //    animaciones.at(i)->draw();
-   //    if(animaciones.at(i)->playing){
-   //       playing = true; 
-   //    }
-   // }
 // }

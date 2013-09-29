@@ -17,7 +17,8 @@ TrackerVideo::TrackerVideo():
    blur(1),
    frameCounter(5),
    frameEsNuevo(false),
-   frameCounterNow(0)
+   frameCounterNow(0),
+   cualPaso(2)
 {
    imgFondo.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
    imgInput.allocate(CAMARA_WIDTH, CAMARA_HEIGHT);
@@ -88,6 +89,16 @@ void TrackerVideo::gotMessage(ofMessage& msg){
       useCamara = false;
       start();
    }
+   else if(msg.message == "PASO1"){
+      cualPaso=0;
+   }
+   else if(msg.message == "PASO2"){
+     cualPaso=1;
+   }
+   else if(msg.message == "PASO3"){
+     cualPaso=2;
+   }
+
 
    else if(string::npos != msg.message.find("BLUR")){
       string val = msg.message.substr( msg.message.find(" ") );
@@ -221,10 +232,10 @@ void TrackerVideo::track(){
       imgWork.threshold(threshold);
 
       // Paso3: Blur
-      imgWork.blurGaussian(blur);
+      if(cualPaso >=1) imgWork.blurGaussian(blur);
 
       // Paso4 Threshold otra vez
-      imgWork.threshold(threshold2);
+      if(cualPaso >=2) imgWork.threshold(threshold2);
 
       // Encontrar contornos
       contourFinder.findContours(imgWork, tamanoMin, tamanoMax, NUM_PERSONAS, false); // false: no busque huecos,
@@ -255,10 +266,9 @@ void TrackerVideo::track(){
 // personas, asumimos que si un blob y una persona estan cerca,
 // son la misma persona/blob (el contour finder puede flickear)
 void TrackerVideo::asignarPersonas(vector<ofxCvBlob> blobs){
-   float distancia, distanciaMin, x1, x2, y1, y2;
-   unsigned int i,j,cualPersona;
+   float distancia, distanciaMin, x1, x2, y1, y2 = 0.0;
+   unsigned int i,j,cualPersona = 0;
    ofRectangle rectangle;
-   bool alreadyChecked;
 
    // marcar a todo el mundo como no-lo-he-chequeado
    for(i=0; i<NUM_PERSONAS; i++){

@@ -29,11 +29,14 @@ void Gui::setup(){
    gui2.addSlider("Threshold2", THRESHOLD2_MIN, THRESHOLD2_MAX, THRESHOLD_DEFAULT);
    gui2.addSlider("Tamanho Minimo", SLIDER_TAMANO_MIN_LEFT, SLIDER_TAMANO_MIN_RIGHT, SLIDER_TAMANO_DEFAULT);
    gui2.addSlider("Tamanho Maximo", SLIDER_TAMANO_MAX_LEFT, SLIDER_TAMANO_MAX_RIGHT, SLIDER_TAMANO_DEFAULT);
+   gui2.addSlider("Frame Counter", 0.0, 30.0, 5.0);
+   gui2.addButton("Play/Pausa", true);
+   gui2.addSlider("Posicion Pelicula", 0.0, 1.0, 0.0);
    gui2.autoSizeToFitWidgets();
 
-   gui3.addSlider("Frame Counter", 0.0, 30.0, 5.0);
-   gui3.addButton("Play/Pausa", true);
-   gui3.addSlider("Posicion Pelicula", 0.0, 1.0, 0.0);
+   gui3.addButton("Paso1",true);
+   gui3.addButton("Paso2",true);
+   gui3.addButton("Paso3",true);
    gui3.autoSizeToFitWidgets();
 
    ofAddListener(gui.newGUIEvent, this, &Gui::guiEvent);
@@ -42,7 +45,7 @@ void Gui::setup(){
 
    ofAddListener(ofEvents().mousePressed, this, &Gui::mousePressed);
    ofAddListener(ofEvents().keyPressed, this, &Gui::keyPressed);
-   
+
    gui2.loadSettings("settings2.xml");
    gui3.loadSettings("settings3.xml");
 }
@@ -126,6 +129,15 @@ void Gui::guiEvent(ofxUIEventArgs &e) {
    }
    else if(e.widget->getName()=="Play/Pausa" && value) {
       ofSendMessage("PLAY");
+   }
+   else if(e.widget->getName()=="Paso1" && value) {
+      ofSendMessage("PASO1");
+   }
+   else if(e.widget->getName()=="Paso2" && value) {
+      ofSendMessage("PASO2");
+   }
+   else if(e.widget->getName()=="Paso3" && value) {
+      ofSendMessage("PASO3");
    }
 }
 

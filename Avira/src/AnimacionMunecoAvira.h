@@ -7,4 +7,7 @@ class AnimacionMunecoAvira: public Animacion{
    public:
       explicit AnimacionMunecoAvira(float x, float y);
       virtual ~AnimacionMunecoAvira();
+   private:
+      float xInicial;
+      float yInicial;
 };

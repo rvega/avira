@@ -23,7 +23,7 @@ class Persona{
       float x;
       float y;
       float height;
-      float width;      
+      float width;
       bool activa;
       bool quieta;
       ofColor color;

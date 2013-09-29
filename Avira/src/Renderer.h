@@ -24,6 +24,8 @@ class Renderer{
       template<class imageType>
          void drawImage(int x, int y, string title, imageType *img);
 
+      void triggerAnimacion(map<int,Persona> gente);
+
       Renderer(const Renderer& other);
       Renderer& operator=(const Renderer& other);
 };

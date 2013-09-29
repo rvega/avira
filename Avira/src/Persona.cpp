@@ -13,10 +13,10 @@ Persona::~Persona(){}
 // {
 //    ofLogNotice() << "Pesona copy constructor";
 // }
-// 
+//
 // Persona& Persona::operator=(const Persona& other){
 //    ofLogNotice() << "Pesona assignment operatorr";
-// 
+//
 //    x = other.x;
 //    y = other.y;
 //    height = other.height;
@@ -25,7 +25,7 @@ Persona::~Persona(){}
 //    quieta = other.quieta;
 //    color = other.color;
 //    startTime = other.startTime;
-// 
+//
 //    return *this;
 // }
 
@@ -76,13 +76,11 @@ float Persona::getX(){
 }
 
 void Persona::setDimensions(float newX, float newY, float newW, float newH){
-   // Solo personas en la mitad de abajo del cuadro y
-   // quietas mas de 1 seg
-   if(newY > 0.4){
+   // quietas mas de 3 seg
       float dist = pow(x-newX,2) + pow(y-newY,2);
       if(dist <= 0.0002){
          float time = ofGetElapsedTimef();
-         if(time - startTime >= 1.0){
+         if(time - startTime >= 3.0){
             quieta=true;
          }
          else{
@@ -93,7 +91,6 @@ void Persona::setDimensions(float newX, float newY, float newW, float newH){
          startTime = ofGetElapsedTimef();
          quieta=false;
       }
-   }
 
    x = newX;
    y = newY;

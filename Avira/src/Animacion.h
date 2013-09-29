@@ -10,6 +10,7 @@ class Animacion{
       int fps;
       bool loop;
       bool playing;
+      bool relativoAPersona; // false: dibuja en x + xOffset, true: dibuja en xPersona+xOffset
 
       virtual void draw();
       virtual void play();
@@ -20,6 +21,8 @@ class Animacion{
       float getY();
       void setX(float val);
       void setY(float val);
+      void setXPersona(float val);
+      void setYPersona(float val);
 
    private:
       void drawImagen();
@@ -29,12 +32,18 @@ class Animacion{
       ofxThreadedImageLoader cargadorImagenes;
 
    protected:
-      float x;
+      float x;   // Posicion inicial de la animacion.
       float y;
+
+      float xPersona;   // Posicion de la persona.
+      float yPersona;
+
+      float xOffset;  // Posicion de esta animacion respecto a la persona.
+      float yOffset;
+
+
       float height;
       float width;
-      float xOffset;
-      float yOffset;
       float startTime;
       bool fullscreen;
       unsigned int frameIndex;

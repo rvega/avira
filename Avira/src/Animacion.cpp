@@ -5,13 +5,28 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 Animacion::Animacion(float x, float y):
-fps(12), loop(true), playing(false), x(x), y(y), height(0), width(0.1), xOffset(0.0), yOffset(0.0), fullscreen(false), frameIndex(0)
+fps(12),
+loop(true),
+playing(false),
+relativoAPersona(false),
+x(x),
+y(y),
+xPersona(x),
+yPersona(y),
+xOffset(0.0),
+yOffset(0.0),
+height(0),
+width(0.1),
+fullscreen(false),
+frameIndex(0)
 {
    ofRegisterGetMessages(this);
 }
 
 Animacion::~Animacion(){
    ofUnregisterGetMessages(this);
+
+   cargadorImagenes.stopThread();
 
    for(unsigned int i = 0; i < animaciones.size(); i++) {
       delete animaciones.at(i);
@@ -60,6 +75,21 @@ void Animacion::setY(float val){
    }
 }
 
+void Animacion::setXPersona(float val){
+   xPersona = val;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setXPersona(val);
+   }
+}
+
+void Animacion::setYPersona(float val){
+   yPersona = val;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setYPersona(val);
+   }
+}
+
+
 //===========================================//
 //  MENSAJES QUE LLEGAN DESDE OTROS OBJETOS  //
 //===========================================//
@@ -95,6 +125,7 @@ void Animacion::drawImagen(){
    float time = ofGetElapsedTimef() - startTime;
    frameIndex = (unsigned int)(time * (float)fps) % imagenes.size();
 
+   // pare al final.
    if(!loop && (frameIndex == (imagenes.size()-1))){
       playing = false;
       frameIndex = imagenes.size()-1;
@@ -102,14 +133,27 @@ void Animacion::drawImagen(){
 
    int imgX, imgY, imgH, imgW;
    if(fullscreen){
-      imgX = (x+xOffset) * VENTANA_WIDTH;
-      imgY = (y+yOffset) * VENTANA_HEIGHT;
+      if(relativoAPersona){
+         imgX = (xPersona+xOffset) * VENTANA_WIDTH;
+         imgY = (yPersona+yOffset) * VENTANA_HEIGHT;
+      }
+      else{
+         imgX = (x+xOffset) * VENTANA_WIDTH;
+         imgY = (y+yOffset) * VENTANA_HEIGHT;
+      }
       imgW = width * VENTANA_WIDTH;
       imgH = height * VENTANA_WIDTH; // Yes, width is ok, (height is initially calculated based on width)
    }
    else{
-      imgX = POSICION_3_X + ((x+xOffset) * IMAGEN_PEQUENA_WIDTH);
-      imgY = POSICION_3_Y + ((y+yOffset) * IMAGEN_PEQUENA_HEIGHT);
+      if(relativoAPersona){
+         imgX = POSICION_3_X + ((xPersona+xOffset) * IMAGEN_PEQUENA_WIDTH);
+         imgY = POSICION_3_Y + ((yPersona+yOffset) * IMAGEN_PEQUENA_HEIGHT);
+      }
+      else{
+         imgX = POSICION_3_X + ((x+xOffset) * IMAGEN_PEQUENA_WIDTH);
+         imgY = POSICION_3_Y + ((y+yOffset) * IMAGEN_PEQUENA_HEIGHT);
+      }
+
       imgW = width * IMAGEN_PEQUENA_WIDTH;
       imgH = height * IMAGEN_PEQUENA_WIDTH;
    }

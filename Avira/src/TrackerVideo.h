@@ -15,8 +15,9 @@ class TrackerVideo{
       ofxCvImage* getInputImage();
 		void gotMessage(ofMessage& msg);
       void track();
-   
+
    private:
+
       ofVideoGrabber camara;
       ofVideoPlayer pelicula;
       ofxCvColorImage imgInput;
@@ -46,4 +47,5 @@ class TrackerVideo{
 
       TrackerVideo(const TrackerVideo&);
       TrackerVideo& operator=(const TrackerVideo&);
+      int cualPaso;
 };
