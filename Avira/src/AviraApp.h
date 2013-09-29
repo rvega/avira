@@ -18,7 +18,6 @@ class AviraApp : public ofBaseApp{
 	public:
 		void setup();
 		void exit();
-		void update();
 		void draw();
 		void gotMessage(ofMessage msg);
 };

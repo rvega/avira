@@ -26,58 +26,6 @@ Renderer::~Renderer() {
    ofUnregisterGetMessages(this);
 }
 
-//===========//
-//  SETTERS  //
-//===========//
-void Renderer::setTitle1(string val){
-   title1 = val;
-}
-
-void Renderer::setTitle2(string val){
-   title2 = val;
-}
-
-void Renderer::setTitle3(string val){
-   title3 = val;
-}
-
-void Renderer::setTitle4(string val){
-   title4 = val;
-}
-
-void Renderer::setTitle5(string val){
-   title5 = val;
-}
-
-void Renderer::setImgOutput(ofxCvColorImage val){
-   //if(!playing) imgOutput = val;
-   imgOutput = val;
-}
-
-void Renderer::setImg1(ofxCvGrayscaleImage val){
-   img1 = val;
-}
-
-void Renderer::setImg2(ofxCvGrayscaleImage val){
-   img2 = val;
-}
-
-void Renderer::setImg3(ofxCvGrayscaleImage val){
-   img3 = val;
-}
-
-void Renderer::setImg4(ofxCvGrayscaleImage val){
-   img4 = val;
-}
-
-void Renderer::setImg5(ofxCvGrayscaleImage val){
-   img5 = val;
-}
-
-void Renderer::setGente( map<int,Persona> val ){
-   gente = val;
-}
-
 //===========================================//
 //  MENSAJES QUE LLEGAN DESDE OTROS OBJETOS  //
 //===========================================//
@@ -94,64 +42,68 @@ void Renderer::gotMessage(ofMessage& msg){
 //  DRAW  //
 //========//
 template<class imageType>
-void Renderer::drawImage(int x, int y, string title, imageType img){
+void Renderer::drawImage(int x, int y, string title, imageType *img){
    ofPushMatrix();
    ofSetColor(255,255,255);
    ofTranslate(x, y);
    ofRect(0,0,IMAGEN_PEQUENA_WIDTH+2, IMAGEN_PEQUENA_HEIGHT+2);
    ofDrawBitmapString(title, 0, -5);
-   img.draw(1, 1, IMAGEN_PEQUENA_WIDTH, IMAGEN_PEQUENA_HEIGHT);
+   img->draw(1, 1, IMAGEN_PEQUENA_WIDTH, IMAGEN_PEQUENA_HEIGHT);
    ofPopMatrix();
 }
 
-void Renderer::draw(){
-   if(!fullscreen){
-      drawImage<ofxCvGrayscaleImage>(POSICION_1_X, POSICION_1_Y, title1, img1);
-      drawImage(POSICION_2_X, POSICION_2_Y, title2, img2);
-      drawImage(POSICION_3_X, POSICION_3_Y, title3, img3);
-      drawImage(POSICION_4_X, POSICION_4_Y, title4, img4);
-      drawImage(POSICION_5_X, POSICION_5_Y, title5, img5);
-      drawImage<ofxCvColorImage>(POSICION_6_X, POSICION_6_Y, "Output:", imgOutput);
+void Renderer::drawInterimImages(vector<ofxCvImage*> interimImages){
+   drawImage(POSICION_1_X, POSICION_1_Y, "Fondo:", interimImages.at(0));
+   drawImage(POSICION_2_X, POSICION_2_Y, "Work:", interimImages.at(1));
+}
 
-      for(int i=0; i<NUM_PERSONAS; i++){
+void Renderer::drawOutputImage(ofxCvImage* outputImage){
+   if(!fullscreen){
+      drawImage(POSICION_3_X, POSICION_3_Y, "Output:", outputImage);
+   }
+   else{
+      outputImage->draw(0, 0, IMAGEN_GRANDE_WIDTH, IMAGEN_GRANDE_HEIGHT);
+   }
+}
+
+void Renderer::drawAnimaciones(map<int,Persona> gente){
+   // Dibuje borde de blobs
+   if(!fullscreen){
+      for(unsigned int i=0; i<gente.size(); i++){
          if(gente.at(i).getActiva()){
             gente.at(i).drawBorder();
          }
       }
    }
-   else{
-      imgOutput.draw(0, 0, IMAGEN_GRANDE_WIDTH, IMAGEN_GRANDE_HEIGHT);
-   }
 
-   for(int i=0; i<NUM_PERSONAS; i++){
-      if(gente.at(i).getActiva()  && !playing){
-         float x = gente.at(0).getX();
-         float y = gente.at(0).getY();
-         animaciones.at(0)->setX(x);
-         animaciones.at(0)->setY(y);
-         animaciones.at(0)->play();
-//         animaciones.at(1)->setX(x);
-//         animaciones.at(1)->setY(y);
-         animaciones.at(1) -> play();
-      }
+   triggerAnimacion(gente);
 
-        // dibuja personaje principal
-
-
-//        if(gente.at(i).getActiva()  && !playing){
-//         float x = gente.at(1).getX();
-//         float y = gente.at(1).getY();
-//         animaciones.at(1)->setX(x);
-//         animaciones.at(1)->setY(y);
-//         animaciones.at(1)->play();
-//      }
-   }
-
+   // dibuje animaciones
    playing = false;
    for(unsigned int i=0; i<animaciones.size(); i++){
-      animaciones.at(i)->draw();
-      if(animaciones.at(i)->playing){
-         playing = true;
-      }
-   }
+       // TODO agarrar la pos de la persona que es.
+
+       animaciones.at(i)->setXPersona(gente.at(0).getX());
+       animaciones.at(i)->setYPersona(gente.at(0).getY());
+       animaciones.at(i)->draw();
+       if(animaciones.at(i)->playing){
+          playing = true;
+       }
+    }
+}
+
+void Renderer::triggerAnimacion(map<int,Persona> gente){
+    // Escoja cual animacion disparar TODO
+    for(int i=0; i<NUM_PERSONAS; i++){
+       if(gente.at(i).getActiva() && gente.at(i).getQuieta() && !playing){
+          // Por ahora, dispare escena avira
+          float x = gente.at(0).getX();
+          float y = gente.at(0).getY();
+          animaciones.at(0)->setX(x);
+          animaciones.at(0)->setY(y);
+          animaciones.at(0)->setXPersona(x);
+          animaciones.at(0)->setYPersona(y);
+          animaciones.at(0)->play();
+       }
+    }
 }

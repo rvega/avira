@@ -1,12 +1,8 @@
 #include "AviraApp.h"
 
 void AviraApp::setup(){
+   ofSetFrameRate(20);
    fullscreen = false;
-   renderer.setTitle1("Fondo:");
-   renderer.setTitle2("Diferencia:");
-   renderer.setTitle3("Thresholded:");
-   renderer.setTitle4("Blured:");
-   renderer.setTitle5("Thresholded 2:");
    gui.setup();
    tracker.start();
    sleep(1);
@@ -17,28 +13,24 @@ void AviraApp::exit(){
    tracker.stop();
 }
 
-void AviraApp::update(){
-   if(!tracker.lock()){
-      // ofLogNotice() << "Choque de locks. AviraApp::update" << "\n";
-   }
-   else{
-      renderer.setGente( tracker.getGente() );
-      renderer.setImgOutput( tracker.getImgInput() );
-      tracker.unlock();
-   }
-
-   if(!fullscreen){
-      renderer.setImg1( tracker.getImgFondo() );
-      renderer.setImg2( tracker.getImgPaso1() );
-      renderer.setImg3( tracker.getImgPaso2() );
-      renderer.setImg4( tracker.getImgPaso3() );
-      renderer.setImg5( tracker.getImgPaso4() );
-   }
-}
-
 void AviraApp::draw(){
+   map<int, Persona> gente;
+
    ofBackground(0, 0, 0, 255);
-   renderer.draw();
+
+   tracker.track();
+   
+   if(!fullscreen){
+      vector<ofxCvImage*> interimImages = tracker.getInterimImages();
+      renderer.drawInterimImages(interimImages);
+   }
+
+   ofxCvImage* outputImage = tracker.getInputImage();
+   renderer.drawOutputImage(outputImage);
+   
+   gente = tracker.getGente();
+
+   renderer.drawAnimaciones(gente);
 }
 
 void AviraApp::gotMessage(ofMessage msg){
