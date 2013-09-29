@@ -3,6 +3,7 @@
 #include "AnimacionMundo.h"
 #include "AnimacionBurbujas.h"
 #include "AnimacionProbeta.h"
+#include "AnimacionCabeza.h"
 
 //=======================//
 //  SETUP Y DESTRUCCION  //
@@ -10,114 +11,100 @@
 AnimacionEscenaPajaro::AnimacionEscenaPajaro(float x, float y):
 Animacion(x,y)
 {
-   // fps=15;
-   // width=0.1;
-   elAccesorio = "probeta";
+   complete = false;
+   estado = "STOP";
 
-    // principal
    AnimacionPajaro* pajaro = new AnimacionPajaro(0,0);
    animaciones.push_back(pajaro);
 
-    // accesorio default
-   AnimacionMundo* mundi = new AnimacionMundo(pajaro -> getX(), pajaro -> getY());
+   AnimacionMundo* mundi = new AnimacionMundo(0,0);
    animaciones.push_back(mundi);
 
-   // Consecuencia accesorio default:
-    AnimacionMundo* mundi_concecuente = new AnimacionMundo(x, y);
+    AnimacionMundo* mundi_concecuente = new AnimacionMundo(0,0);
+    mundi_concecuente->relativoAPersona = true;
     animaciones.push_back(mundi_concecuente);
-    setCualAccesorio(elAccesorio);
 
+    AnimacionProbeta* probeta = new AnimacionProbeta(0,0);
+    animaciones.push_back(probeta);
 
+    AnimacionBurbujas* burbujas = new AnimacionBurbujas(0,0);
+    burbujas->relativoAPersona = true;
+    animaciones.push_back(burbujas);
+
+    setCualAccesorio("probeta");
 }
 
-
-// AnimacionEscenaPajaro::~AnimacionEscenaPajaro(){ }
-
 void AnimacionEscenaPajaro::setCualAccesorio(string val){
-//    // Quitar animaciones.at(1) osea el accesorio.
-//    // Quitar animaciones.at(2) osea la consecuencia del accesorio (borbujas p. ej.)
-     for( unsigned int i = 0; i<animaciones.size();i++)
-     {
-         animaciones.pop_back();
-
-
-     }
     if(val == "probeta"){
-       AnimacionProbeta* probeta = new AnimacionProbeta(animaciones.at(0)->getX(), animaciones.at(0)->getY());
-       animaciones.push_back(probeta);
-
-       AnimacionBurbujas* burbujas = new AnimacionBurbujas(animaciones.at(1)->getX(), animaciones.at(1)->getY());
-       animaciones.push_back(burbujas);
+        accesorio = animaciones.at(3);
+        consecuencia = animaciones.at(4);
     }
     else if(val=="mundo"){
-            //SET en las posiciones del pajaro
-       AnimacionMundo* mundi = new AnimacionMundo(animaciones.at(0)->getX(), animaciones.at(0)->getY());
-       animaciones.push_back(mundi);
-
-       AnimacionMundo* mundi2 = new AnimacionMundo(animaciones.at(1)->getX(), animaciones.at(1)->getY());
-       animaciones.push_back(mundi2); // En el caso del mundo, la consecuencia es la misma animacion de el accesorio.
+        accesorio = animaciones.at(1);
+        consecuencia = animaciones.at(2);
     }
-//    // etc...
 }
 
 
 void AnimacionEscenaPajaro::play(){
-   int duracionMovimientoPajaro = 5000;
-   int delayMovimientoPajaro = 2000;
-   tween.setParameters(easingLinear, ofxTween::easeInOut,0.01, 1,duracionMovimientoPajaro, delayMovimientoPajaro);
-
+   estado = "PAJARO_VOLANDO";
+   complete = false;
    animaciones.at(0)->play();
-   animaciones.at(1)->stop();
-   animaciones.at(2)->stop();
+   accesorio->stop();
+   consecuencia->stop();
 
    Animacion::play();
 }
 
 void AnimacionEscenaPajaro::draw(){
-   // Aqiui falta poner condicionales, tiempos, loquesea para mostrar la consecuencia.
-
-
-   bool teAtrape = false;
-
-   animaciones.at(0)->setX(tween.update());
-    if(animaciones.at(0)->getX()>= 1)
-    {
-        tween.addValue(animaciones.at(0)->getX(),0);
-        tween.start();
+    if(estado == "PAJARO_VOLANDO"){
+        // if pajaro cerca de persona
+        if(abs((animaciones.at(0)->getX() - xPersona)) < 0.1){
+            accesorio->setX( animaciones.at(0)->getX() + 0.05 );
+            accesorio->setY( animaciones.at(0)->getY() + 0.1 );
+            accesorio->setXPersona( xPersona );
+            accesorio->setYPersona( yPersona );
+            accesorio->play();
+            estado = "ACCESORIO_CAYENDO";
+        }
     }
-   // si el pajaro.x es mayor o igual a el blob.x
-   //TODO: medir distancia entre los dos puntos
-   if(!animaciones.at(1)->playing && abs((animaciones.at(0)-> getX()-x)) >= 0.5 && !animaciones.at(2)->playing ){
-
-      animaciones.at(1)->setX( animaciones.at(0)->getX() );
-      animaciones.at(1)->setY( animaciones.at(0)->getY()+0.1 );
-
-      animaciones.at(1)->play();
-    // movimiento del accesorio
-      multitween.setParameters(easingLinear,ofxTween::easeInOut,animaciones.at(1)->getX(),x+0.1, 1000, 50);
-      multitween.addValue(animaciones.at(1)->getY(),y);
-      multitween.start();
-
-
-   }
-    if(animaciones.at(1)->playing)
-    {
-        animaciones.at(1)->setX(multitween.update());
-      animaciones.at(1)->setY(multitween.getTarget(1));
-
+    if(estado == "ACCESORIO_CAYENDO"){
+        if( accesorio->isComplete() ){
+            consecuencia->play();
+            accesorio->stop();
+            timer = ofGetElapsedTimef();
+            estado = "ACCESORIO_CONSECUENCIA";
+        }
     }
-   //compara la posicion de la animacion con la del blob
-    // depurar
-   if(ofDist(animaciones.at(0)-> getX(),animaciones.at(0)-> getY(),x,y) <= 0.05)
-   {
-
-      teAtrape = true;
-
-   }
- ofLogNotice()<<"el absoluto"<<":   " << ofDist(animaciones.at(0)-> getX(),animaciones.at(0)-> getY(),x,y)<<endl;
-
-
+    if(estado == "ACCESORIO_CONSECUENCIA"){
+        consecuencia->setXPersona(xPersona);
+        consecuencia->setYPersona(yPersona);
+        if(ofGetElapsedTimef() - timer > 6) {
+            consecuencia->stop();
+            animaciones.at(0)->stop();
+            stop();
+            complete = true;
+            estado == "STOP";
+        }
+    }
 
    Animacion::draw();
 }
 
+bool AnimacionEscenaPajaro::isComplete(){
+    return complete;
+}
+
+void AnimacionEscenaPajaro::setX(float val){
+   x = 0;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setX(0);
+   }
+}
+
+void AnimacionEscenaPajaro::setY(float val){
+   y = 0;
+   for(unsigned int i=0; i<animaciones.size(); i++){
+      animaciones.at(i)->setY(0);
+   }
+}

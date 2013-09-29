@@ -1,7 +1,7 @@
 #pragma once
 
-#define VENTANA_WIDTH 934
-#define VENTANA_HEIGHT 700
+#define VENTANA_WIDTH 1024
+#define VENTANA_HEIGHT 768
 
 #define CAMARA_HEIGHT 480
 #define CAMARA_WIDTH 640

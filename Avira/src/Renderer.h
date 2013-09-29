@@ -18,8 +18,11 @@ class Renderer{
 
    private:
       bool fullscreen;
-      bool playing;
       std::vector<Animacion*> animaciones;
+      string estado;
+      float timer;
+      Animacion* animacionActiva;
+      int personaActiva;
 
       template<class imageType>
          void drawImage(int x, int y, string title, imageType *img);

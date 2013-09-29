@@ -11,7 +11,8 @@ class AnimacionEscenaAvira: public Animacion{
 
       void play();
       void draw();
+      bool isComplete();
 
    private:
-      //float timer;
+      bool complete;
 };

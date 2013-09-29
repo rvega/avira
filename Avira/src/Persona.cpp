@@ -80,7 +80,7 @@ void Persona::setDimensions(float newX, float newY, float newW, float newH){
    float dist = pow(x-newX,2) + pow(y-newY,2);
    if(dist <= 0.0002){
       float time = ofGetElapsedTimef();
-      if(time - startTime >= 3.0){
+      if(time - startTime >= 6.0){
          quieta=true;
       }
       else{

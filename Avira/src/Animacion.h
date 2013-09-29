@@ -19,19 +19,21 @@ class Animacion{
       void gotMessage(ofMessage& msg);
       float getX();
       float getY();
-      void setX(float val);
-      void setY(float val);
-      void setXPersona(float val);
+      virtual void setX(float val);
+      virtual void setY(float val);
       void setYPersona(float val);
+      void setXPersona(float val);
+      virtual bool isComplete(){return false;};
 
    private:
-      void drawImagen();
+      virtual void drawImagen();
       void drawSubAnimaciones();
 
-      std::vector<ofImage> imagenes;
       ofxThreadedImageLoader cargadorImagenes;
 
    protected:
+      std::vector<ofImage> imagenes;
+
       float x;   // Posicion inicial de la animacion.
       float y;
 

@@ -8,6 +8,7 @@
 AnimacionEscenaAvira::AnimacionEscenaAvira(float x, float y):
 Animacion(x,y)
 {
+   complete = false;
    width=0.1;
 
    Animacion* muneco = new AnimacionMunecoAvira(x, y);
@@ -21,24 +22,23 @@ Animacion(x,y)
 AnimacionEscenaAvira::~AnimacionEscenaAvira(){ }
 
 void AnimacionEscenaAvira::play(){
-   ofLogNotice() << "Play Muneco";
-   ofLogNotice() << startTime;
    animaciones.at(0)->play();
+   complete = false;
    Animacion::play();
 }
 
 void AnimacionEscenaAvira::draw(){
    float elapsedTime = ofGetElapsedTimef() - startTime;
    if(playing && !animaciones.at(1)->playing && (elapsedTime >= 2)){
-      ofLogNotice() << "Play Mask";
-      ofLogNotice() << elapsedTime;
       animaciones.at(1)->play();
    }
    if(playing && (elapsedTime >= 10)){
-      ofLogNotice() << "Stop";
-      ofLogNotice() << elapsedTime;
       stop();
+      complete = true;
    }
    Animacion::draw();
 }
 
+bool AnimacionEscenaAvira::isComplete(){
+    return complete;
+}

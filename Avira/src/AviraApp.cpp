@@ -19,7 +19,7 @@ void AviraApp::draw(){
    ofBackground(0, 0, 0, 255);
 
    tracker.track();
-   
+
    if(!fullscreen){
       vector<ofxCvImage*> interimImages = tracker.getInterimImages();
       renderer.drawInterimImages(interimImages);
@@ -27,7 +27,7 @@ void AviraApp::draw(){
 
    ofxCvImage* outputImage = tracker.getInputImage();
    renderer.drawOutputImage(outputImage);
-   
+
    gente = tracker.getGente();
 
    renderer.drawAnimaciones(gente);

@@ -7,13 +7,17 @@
 //  SETUP Y DESTRUCCION  //
 //=======================//
 Renderer::Renderer():
-   fullscreen(false),
-   playing(false)
+   fullscreen(false)
 {
+   ofSeedRandom();
+
+   estado = "ESPERANDO";
+   timer = ofGetElapsedTimef();
+
    Animacion* escenaAvira = new AnimacionEscenaAvira(0,0);
    animaciones.push_back(escenaAvira);
 
-    Animacion* escenaPajaro = new AnimacionEscenaPajaro(-0.2, 0.8);
+    Animacion* escenaPajaro = new AnimacionEscenaPajaro(0, 0);
    animaciones.push_back(escenaPajaro);
 
    ofRegisterGetMessages(this);
@@ -79,31 +83,42 @@ void Renderer::drawAnimaciones(map<int,Persona> gente){
    triggerAnimacion(gente);
 
    // dibuje animaciones
-   playing = false;
    for(unsigned int i=0; i<animaciones.size(); i++){
-       // TODO agarrar la pos de la persona que es.
-
-       animaciones.at(i)->setXPersona(gente.at(0).getX());
-       animaciones.at(i)->setYPersona(gente.at(0).getY());
+       animaciones.at(i)->setXPersona(gente.at(personaActiva).getX());
+       animaciones.at(i)->setYPersona(gente.at(personaActiva).getY());
        animaciones.at(i)->draw();
-       if(animaciones.at(i)->playing){
-          playing = true;
-       }
     }
 }
 
 void Renderer::triggerAnimacion(map<int,Persona> gente){
     // Escoja cual animacion disparar TODO
-    for(int i=0; i<NUM_PERSONAS; i++){
-       if(gente.at(i).getActiva() && gente.at(i).getQuieta() && !playing){
-          // Por ahora, dispare escena avira
-          float x = gente.at(0).getX();
-          float y = gente.at(0).getY();
-          animaciones.at(0)->setX(x);
-          animaciones.at(0)->setY(y);
-          animaciones.at(0)->setXPersona(x);
-          animaciones.at(0)->setYPersona(y);
-          animaciones.at(0)->play();
-       }
+    if(estado == "ESPERANDO"){
+        if(ofGetElapsedTimef() - timer > 10){
+            estado = "BUSCANDO_GENTE_QUIETA";
+        }
+    }
+
+    if(estado == "BUSCANDO_GENTE_QUIETA"){
+        for(unsigned int i=0; i<NUM_PERSONAS; i++){
+            if(gente.at(i).getActiva() && gente.at(i).getQuieta()){
+                estado = "ANIMANDO";
+                int cualAnimacion = ofRandom( animaciones.size() );
+                animacionActiva = animaciones.at(cualAnimacion);
+                personaActiva = i;
+                animacionActiva->setX( gente.at(i).getX() );
+                animacionActiva->setY( gente.at(i).getY() );
+                animacionActiva->setXPersona( gente.at(i).getX() );
+                animacionActiva->setYPersona( gente.at(i).getY() );
+                animacionActiva->play();
+                break;
+            }
+        }
+    }
+
+    if(estado == "ANIMANDO"){
+        if(animacionActiva->isComplete()){
+            estado = "ESPERANDO";
+            timer = ofGetElapsedTimef();
+        }
     }
 }

@@ -12,4 +12,19 @@ Animacion(x,y)
    setPath("animaciones/pajaro/accesorios/probeta");
 }
 
-AnimacionProbeta::~AnimacionProbeta(){ }
+void AnimacionProbeta::play(){
+    tween.setParameters(suavizado, ofxTween::easeIn, x, xPersona, 1800, 0);
+    tween.addValue(y, yPersona);
+    tween.start();
+    Animacion::play();
+}
+
+void AnimacionProbeta::draw(){
+    x = tween.update();
+    y = tween.getTarget(1);
+    Animacion::draw();
+}
+
+bool AnimacionProbeta::isComplete(){
+    return tween.isCompleted();
+}
